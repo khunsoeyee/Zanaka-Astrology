@@ -5,26 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရိုးရာ ဟောစတမ်း</title>
     <style>
-        :root { --primary-color: #d4af37; --bg-color: #f4f1ea; }
+        :root { --primary-color: #d4af37; --bg-color: #f4f1ea; --dark-brown: #5a4a1a; }
         body { font-family: 'Pyidaungsu', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; border-top: 6px solid var(--primary-color); }
+        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; border-top: 6px solid var(--primary-color); position: relative; }
         
-        /* နေ့ရွေးရန် */
-        .day-select { margin-bottom: 20px; }
-        select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 16px; margin-bottom: 10px; }
+        h2 { color: var(--dark-brown); margin-bottom: 20px; }
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 16px; margin-bottom: 15px; }
         
-        /* ဇယားပုံပြသမည့်နေရာ */
         #chartImage { width: 100%; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; display: none; }
-        .placeholder-text { color: #888; margin-bottom: 20px; font-style: italic; }
+        .placeholder-text { color: #888; margin-bottom: 20px; font-style: italic; font-size: 14px; }
 
-        /* ဟောကိန်းခလုတ်များ */
         .button-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .btn-fortune { padding: 10px 5px; background: #5a4a1a; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .btn-fortune { padding: 12px 5px; background: var(--dark-brown); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: 0.3s; font-weight: bold; }
         .btn-fortune:hover { background: var(--primary-color); }
 
-        /* ဟောစာတမ်းပြသရန် */
-        #result { padding: 15px; border-radius: 10px; background: #fffdf5; border: 1px solid #d4af37; display: none; text-align: justify; animation: fadeIn 0.5s; }
+        #result { padding: 15px; border-radius: 10px; background: #fffdf5; border: 1px solid #d4af37; display: none; text-align: justify; margin-bottom: 30px; animation: fadeIn 0.5s; }
         .status-title { font-weight: bold; color: #d32f2f; font-size: 20px; text-align: center; display: block; margin-bottom: 10px; }
+
+        /* အောက်ခြေခလုတ်များ */
+        .footer-nav { border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        .btn-link { padding: 10px 20px; border-radius: 5px; border: 1px solid var(--primary-color); background: white; color: var(--dark-brown); cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s; }
+        .btn-link:hover { background: var(--primary-color); color: white; }
+
+        /* Modal Design (About Us အတွက်) */
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 30% auto; padding: 25px; border-radius: 15px; width: 80%; max-width: 400px; text-align: center; position: relative; border-bottom: 5px solid var(--primary-color); }
+        .close { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; color: #888; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -34,9 +41,8 @@
     <h2>ဗေဒင်ဟောစတမ်း</h2>
     
     <div class="day-select">
-        <label style="display:block; text-align:left; font-weight:bold; margin-bottom:5px;">မွေးနေ့ ရွေးချယ်ပါ</label>
         <select id="dayPicker" onchange="updateImage()">
-            <option value="">-- ရွေးချယ်ရန် --</option>
+            <option value="">-- မွေးနေ့ ရွေးချယ်ပါ --</option>
             <option value="sun">တနင်္ဂနွေ</option>
             <option value="mon">တနင်္လာ</option>
             <option value="tue">အင်္ဂါ</option>
@@ -52,7 +58,7 @@
         <p id="placeholder" class="placeholder-text">မွေးနေ့ရွေးလိုက်လျှင် ဇယားပုံပေါ်လာပါမည်</p>
     </div>
 
-    <p style="font-weight:bold; color:#5a4a1a;">မိမိရောက်နေသော အကွက်ကိုနှိပ်ပါ</p>
+    <p style="font-weight:bold; color:var(--dark-brown); margin-bottom:10px;">မိမိရောက်နေသော အကွက်ကိုနှိပ်ပါ</p>
     <div class="button-grid">
         <button class="btn-fortune" onclick="showFortune('တည်')">တည်</button>
         <button class="btn-fortune" onclick="showFortune('ထွက်')">ထွက်</button>
@@ -66,6 +72,23 @@
     <div id="result">
         <span id="resTitle" class="status-title"></span>
         <div id="resBody"></div>
+    </div>
+
+    <div class="footer-nav">
+        <button class="btn-link" onclick="toggleAbout()">About Us</button>
+        <a href="https://khunsoeyee.blogspot.com" target="_blank" class="btn-link">BLOG</a>
+    </div>
+</div>
+
+<div id="aboutModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleAbout()">&times;</span>
+        <p style="text-align: justify; line-height: 1.8;">
+            မင်္ဂလာပါ ကျနော်ကနည်းပညာမကျွမ်းကျင်သေးသူမို့ စာစီတာတွေမညီတာရှိရင် တောင်းပန်ပါတယ်ဗျ။ အားလုံးဘဲ ရွှင်လန်းချမ်းမြေ့ကြပါစေ။
+        </p>
+        <p style="font-weight: bold; margin-top: 15px; color: var(--dark-brown);">
+            By ခွန်စိုးရီ - ချို့ꩻထီ
+        </p>
     </div>
 </div>
 
@@ -84,9 +107,7 @@
         const day = document.getElementById('dayPicker').value;
         const img = document.getElementById('chartImage');
         const placeholder = document.getElementById('placeholder');
-
         if (day) {
-            // ပုံရှိရမည့်လမ်းကြောင်း (ဥပမာ sun.jpg, mon.jpg)
             img.src = day + ".jpg"; 
             img.style.display = "block";
             placeholder.style.display = "none";
@@ -97,16 +118,21 @@
     }
 
     function showFortune(type) {
-        const resultDiv = document.getElementById('result');
-        const resTitle = document.getElementById('resTitle');
-        const resBody = document.getElementById('resBody');
+        document.getElementById('resTitle').innerText = "** " + type + " **";
+        document.getElementById('resBody').innerText = fortunes[type];
+        document.getElementById('result').style.display = "block";
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+    }
 
-        resTitle.innerText = "** " + type + " **";
-        resBody.innerText = fortunes[type];
-        resultDiv.style.display = "block";
-        
-        // ခလုတ်နှိပ်ပြီးရင် ရလဒ်ဆီသို့ auto scroll ဆွဲပေးခြင်း
-        resultDiv.scrollIntoView({ behavior: 'smooth' });
+    function toggleAbout() {
+        const modal = document.getElementById('aboutModal');
+        modal.style.display = (modal.style.display === "block") ? "none" : "block";
+    }
+
+    // Modal အပြင်ဘက်ကိုနှိပ်ရင် ပိတ်ပေးရန်
+    window.onclick = function(event) {
+        const modal = document.getElementById('aboutModal');
+        if (event.target == modal) { modal.style.display = "none"; }
     }
 </script>
 
