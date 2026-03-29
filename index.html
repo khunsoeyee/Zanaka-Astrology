@@ -6,10 +6,16 @@
     <title>မြန်မာ့ရိုးရာ ဟောစတမ်း</title>
     <style>
         :root { --primary-color: #d4af37; --bg-color: #f4f1ea; --dark-brown: #5a4a1a; }
-        body { font-family: 'Pyidaungsu', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; }
+        body { font-family: 'Pyidaungsu', 'UniBurma', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; }
         .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; border-top: 6px solid var(--primary-color); position: relative; }
         
-        h2 { color: var(--dark-brown); margin-bottom: 20px; }
+        /* ဘာသာစကား ချိန်းသည့်ခလုတ် */
+        .lang-switcher { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; }
+        .lang-btn { cursor: pointer; border: 1px solid #ddd; border-radius: 5px; background: white; padding: 3px 8px; display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: bold; transition: 0.3s; }
+        .lang-btn:hover { background: #f0f0f0; }
+        .flag-icon { width: 20px; height: 15px; object-fit: cover; border-radius: 2px; }
+
+        h2 { color: var(--dark-brown); margin: 25px 0 15px 0; font-size: 22px; }
         select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #ddd; font-size: 16px; margin-bottom: 15px; }
         
         #chartImage { width: 100%; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; display: none; }
@@ -22,14 +28,12 @@
         #result { padding: 15px; border-radius: 10px; background: #fffdf5; border: 1px solid #d4af37; display: none; text-align: justify; margin-bottom: 30px; animation: fadeIn 0.5s; }
         .status-title { font-weight: bold; color: #d32f2f; font-size: 20px; text-align: center; display: block; margin-bottom: 10px; }
 
-        /* အောက်ခြေခလုတ်များ */
         .footer-nav { border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 10px; justify-content: center; }
-        .btn-link { padding: 10px 20px; border-radius: 5px; border: 1px solid var(--primary-color); background: white; color: var(--dark-brown); cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s; }
-        .btn-link:hover { background: var(--primary-color); color: white; }
-
-        /* Modal Design (About Us အတွက်) */
-        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: white; margin: 30% auto; padding: 25px; border-radius: 15px; width: 80%; max-width: 400px; text-align: center; position: relative; border-bottom: 5px solid var(--primary-color); }
+        .btn-link { padding: 10px 15px; border-radius: 5px; border: 1px solid var(--primary-color); background: white; color: var(--dark-brown); cursor: pointer; text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        
+        /* Modal Design */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 30% auto; padding: 25px; border-radius: 15px; width: 85%; max-width: 400px; text-align: center; position: relative; border-bottom: 5px solid var(--primary-color); }
         .close { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; color: #888; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -38,27 +42,36 @@
 <body>
 
 <div class="container">
-    <h2>ဗေဒင်ဟောစတမ်း</h2>
+    <div class="lang-switcher">
+        <div class="lang-btn" onclick="changeLang('my')">
+            <img src="https://flagcdn.com/w40/mm.png" class="flag-icon" alt="MM"> MY
+        </div>
+        <div class="lang-btn" onclick="changeLang('pa')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Pa-O_flag.svg" class="flag-icon" alt="PaO"> PA
+        </div>
+    </div>
+
+    <h2 id="mainTitle">ဗေဒင်ဟောစတမ်း</h2>
     
     <div class="day-select">
         <select id="dayPicker" onchange="updateImage()">
-            <option value="">-- မွေးနေ့ ရွေးချယ်ပါ --</option>
-            <option value="sun">တနင်္ဂနွေ</option>
-            <option value="mon">တနင်္လာ</option>
-            <option value="tue">အင်္ဂါ</option>
-            <option value="wed">ဗုဒ္ဓဟူး</option>
-            <option value="thu">ကြာသပတေး</option>
-            <option value="fri">သောကြာ</option>
-            <option value="sat">စနေ</option>
+            <option value="" id="optDefault">-- မွေးနေ့ ရွေးချယ်ပါ --</option>
+            <option value="sun" id="optSun">တနင်္ဂနွေ</option>
+            <option value="mon" id="optMon">တနင်္လာ</option>
+            <option value="tue" id="optTue">အင်္ဂါ</option>
+            <option value="wed" id="optWed">ဗုဒ္ဓဟူး</option>
+            <option value="thu" id="optThu">ကြာသပတေး</option>
+            <option value="fri" id="optFri">သောကြာ</option>
+            <option value="sat" id="optSat">စနေ</option>
         </select>
     </div>
 
     <div id="imageContainer">
-        <img id="chartImage" src="" alt="ဇယားပုံ">
+        <img id="chartImage" src="" alt="Chart">
         <p id="placeholder" class="placeholder-text">မွေးနေ့ရွေးလိုက်လျှင် ဇယားပုံပေါ်လာပါမည်</p>
     </div>
 
-    <p style="font-weight:bold; color:var(--dark-brown); margin-bottom:10px;">မိမိရောက်နေသော အကွက်ကိုနှိပ်ပါ</p>
+    <p style="font-weight:bold; color:var(--dark-brown); margin-bottom:10px;" id="instruction">မိမိရောက်နေသော အကွက်ကိုနှိပ်ပါ</p>
     <div class="button-grid">
         <button class="btn-fortune" onclick="showFortune('တည်')">တည်</button>
         <button class="btn-fortune" onclick="showFortune('ထွက်')">ထွက်</button>
@@ -75,37 +88,82 @@
     </div>
 
     <div class="footer-nav">
-        <button class="btn-link" onclick="toggleAbout()">About Us</button>
-        <a href="https://khunsoeyee.blogspot.com" target="_blank" class="btn-link">BLOG</a>
+        <button class="btn-link" onclick="toggleAbout()" id="btnAbout">About Us</button>
+        <a href="https://khunsoeyee.blogspot.com" target="_blank" class="btn-link" id="btnBlog">BLOG</a>
     </div>
 </div>
 
 <div id="aboutModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="toggleAbout()">&times;</span>
-        <p style="text-align: justify; line-height: 1.8;">
-            မင်္ဂလာပါ 
-            ကျနော်ကနည်းပညာမကျွမ်းကျင်သေးသူမို့ 
-            စာစီတာတွေမညီတာရှိရင်တောင်းပန်ပါတယ်ဗျ။
-            
-            အားလုံးဘဲ ရွှင်လန်းချမ်းမြေ့ကြပါစေ။
-        </p>
-        <p style="font-weight: bold; margin-top: 15px; color: var(--dark-brown);">
-            By ခွန်စိုးရီ - ချို့ꩻထီ
-        </p>
+        <p id="aboutText" style="text-align: justify; line-height: 1.8;"></p>
+        <p style="font-weight: bold; margin-top: 15px; color: var(--dark-brown);" id="aboutAuthor">By ခွန်စိုးရီ - ချို့ꩻထီ</p>
     </div>
 </div>
 
 <script>
-    const fortunes = {
-        "တည်": "တည်ဆိုတာသင်္ဘောတည်ဆောက်တာကိုပြောတာပါ။ လုပ်ငန်းတွေအတွက်ကြံစည်ဆဲ၊ လုပ်ငန်းတွေအစပြုဆဲအခြေအနေကိုရောက်နေတယ်လို့ ပြောတာပါ။ လုပ်ငန်းအတွက်ရင်းနှီးမြုပ်နှံဖို့ ရန်ရှာရာတွင်လွယ်ကူလိမ့်မည်။ လုပ်ငန်းအကြံအစည်အောင်မြင်မည်။ အလုပ်ရှာနေလျှင် အလုပ်ရမည်။ အလုပ်လျှောက်ထားလျှင်အလုပ်ရမည်။ အမှုကိစ္စတွေ၊ အလုပ်တွေများမည်။ ငွေဝင်များသလို ငွေထွက်လဲများမည်။",
-        "ထွက်": "ထွက်ဆိုတာဇမ္ဗနဂိုရ်ပြည်ကသင်္ဘောစထွက်တာကိုပြောတာပါ။ ကောင်းမွန်သောမိတ်ဆွေသစ်များ တိုးမည်။ စပ်တူရှယ်ယာလုပ်ငန်းများလုပ်ရမည့်အချိန်ကောင်းပါ။ပြည်တွင်း၊ပြည်ပခရီးများသွားရမည်။ နိုင်ငံခြားကုန်လုပ်ငန်းများ အောင်မြင်မည်။",
-        "ပျက်": "ပျက်ဆိုတာ သင်္ဘောပျက်သွားတာကိုပြောတာပါ။ ကံဇာတာညံ့ချိန်ပါ။ စီးပွားရေးကျဆင်းမယ်။ သူများမကောင်းကြံတာခံရတတ်သည်။ မတော်တဆထိခိုက်မှုအသေးအဖွဲများကြုံတတ်သလို သေကောင်ပေါင်းလဲဝေဒနာများ ဖြစ်တတ်သည်။ ရာထူးလုပ်ငန်းကိုနှောင့်ယှက်မည့်သူ ပေါ်လာလိမ့်မည်။ အိမ်ထောင်ရေးကို အထူးသတိထားပါ။",
-        "ကျောက်": "ကျောက်ဆိုတာမေခလာနတ်သမီးက ကျောက်ဖျာထက်မှာတင်ပေးထားတဲ့ ကိန်းဆိုက်ပြီဆိုတော့ ကံကောင်းပြီလို့မှတ်ပါ။ မမျှော်လင့်ပဲကူညီမယ့်သူတွေပေါ်မယ်။ အောင်ပါလေသိန်းထီဆုကြီးများ ပေါက်မည်။ မကျန်းမမာဖြစ်နေရင်တော့ ပြန်ပြီးကျန်းမာလာမည်။ ဆရာကောင်းနဲ့တွေ့ပြီလို့ဟောပါ။ အမှုရှိရင်ရှိနိုင်မည်။ အချုပ်နှောင်ခံနေရရင်လွတ်မည်။ ကျဆင်းနေသောစီးပွားရေးများ ပြန်တက်လာမည်။ ပညာရေးလဲကောင်းမည်။ အိမ်ထောင်ကျလျှင် အိမ်ထောင်ဖက်ကောင်းနှင့်တွေ့ပြီလို့ဟောပါ။ အကြံအစည်များ အောင်မြင်မည်။",
-        "ထီး": "ထီးဆိုတာ ထီးဖြူဆောင်းတဲ့ကိန်းပါ။ နာမည်ကျော်ကြားထင်ရှားမည်။ ကောင်းသတင်းနှင့် ကျော်ကြားခြင်းပါ။ ဆုလာဘ်တွေရမည်။ ဘွဲ့ထူးဂုဏ်ထူးများရမည်။ စာမေးပွဲဖြေထားရင် စာမေးပွဲအောင်မည်။ ရာထူးတိုးမည်။ စီးပွားရေးလုပ်ငန်းများ တိုးချဲ့ရမည်။ အိမ်သစ်ဆောက်ကိန်း၊ အိမ်သစ်ရကိန်းပေါ်မည်။",
-        "နန်း": "နန်းဆိုတာ နန်းအပ်ခံရတဲ့ကိန်းပါ။ ကံဇာတာကောင်းပြီလို့ဟောပါ။ ရာထူးတိုးမည်။ စီးပွားဖြစ်ထွန်းမည်။ အမွေအနှစ်တွေရမည်။ အပြိုင်အဆိုင်တွေမှာ အနိုင်ရမည်။ ရွေးကောက်ပွဲတွေမှာဝင်ရောက်ယှဉ်ပြိုင်ရင်နိုင်မည်။ အိမ်ထောင်ကျကိန်းရှိသည်။ အိမ်ထောင်ကျလျှင်လဲ ကံကောင်းမည်။ အလှူပြုလုပ်ရမည်။ မင်းစိုးရာဇာအကြီးအကဲဖြစ်မည်။",
-        "စံ": "စံဆိုတာ မင်းစည်းစိမ်ကိုခံယူရတဲ့ကိန်းပါ။ ဘေးအန္တာရာယ်ကင်းပြီး စုတ်ကြီး၊လာဘ်ကြီးတွေဝင်မည်။ လုပ်ငန်းတွေတိုးတက်မည်။ ကြီးမားတဲ့ရာထူးတွေရမည်။ သိုလှောင်ပစ္စည်းတွေကအကျိုးအမြတ်ရမည်။ အခြွေအရံမိတ်ဆွေအပေါင်း အသင်းတိုးမည်။ ငွေကြေးစုဆောင်းမိမည်။"
+    let currentLang = 'my';
+
+    const translations = {
+        my: {
+            title: "ဗေဒင်ဟောစတမ်း",
+            placeholder: "မွေးနေ့ရွေးလိုက်လျှင် ဇယားပုံပေါ်လာပါမည်",
+            instruction: "မိမိရောက်နေသော အကွက်ကိုနှိပ်ပါ",
+            optDefault: "-- မွေးနေ့ ရွေးချယ်ပါ --",
+            days: ["တနင်္ဂနွေ", "တနင်္လာ", "အင်္ဂါ", "ဗုဒ္ဓဟူး", "ကြာသပတေး", "သောကြာ", "စနေ"],
+            about: "မင်္ဂလာပါ ကျနော်ကနည်းပညာမကျွမ်းကျင်သေးသူမို့ စာစီတာတွေမညီတာရှိရင် တောင်းပန်ပါတယ်ဗျ။ အားလုံးဘဲ ရွှင်လန်းချမ်းမြေ့ကြပါစေ။",
+            author: "By ခွန်စိုးရီ - ချို့ꩻထီ"
+        },
+        pa: {
+            title: "ဗေဒင်ဟောစတမ်း (ပအိုဝ်ႏ)",
+            placeholder: "မိဉ်ႏလွိုက်မွူးနီꩻနဝ်ꩻ ဇယားပုံႏအီႏပေါႏလွဉ်သွူ",
+            instruction: "နမ်းကတွိုႏဒါႏ အကွက်ယိုနျ့သွော့",
+            optDefault: "-- လွိုက်မွူးနီꩻ --",
+            days: ["တနင်္ဂနွေႏ", "တနင်္လာႏ", "အင်္ဂါႏ", "ဗုဒ္ဓဟူး", "ကျာႏသပတေး", "သောကြာႏ", "စနေႏ"],
+            about: "မင်္ဂလာႏဒျာႏဩ၊ နီသွဉ်းယိုနဝ်ꩻ နည်းပညာဖဲ့ꩻ တဒါႏလဲပ်ငါႏတဝ်းဒွုန်းတဲင် လိတ်ဖြုံႏမိဉ်ႏတမဲဉ်ႏတဝ်းလဲ့ ခွင်ꩻလွှတ်ဖေႏသွော့ဩ။ ကားကအဝ်ႏ သꩻရျူႏနမ်းသာႏ အဝ်ႏအုံဟဝ်ခြွိုင်ႏသန်ꩻလွဒျာႏသွော့ဩ။",
+            author: "By ခွန်စိုးရီ - ချို့ꩻထီ"
+        }
     };
+
+    const fortunes = {
+        my: {
+            "တည်": "တည်ဆိုတာသင်္ဘောတည်ဆောက်တာကိုပြောတာပါ။ လုပ်ငန်းတွေအတွက်ကြံစည်ဆဲ၊ လုပ်ငန်းတွေအစပြုဆဲအခြေအနေကိုရောက်နေတယ်လို့ ပြောတာပါ။ လုပ်ငန်းအတွက်ရင်းနှီးမြုပ်နှံဖို့ ရန်ရှာရာတွင်လွယ်ကူလိမ့်မည်။ လုပ်ငန်းအကြံအစည်အောင်မြင်မည်။ အလုပ်ရှာနေလျှင် အလုပ်ရမည်။ အလုပ်လျှောက်ထားလျှင်အလုပ်ရမည်။ အမှုကိစ္စတွေ၊ အလုပ်တွေများမည်။ ငွေဝင်များသလို ငွေထွက်လဲများမည်။",
+            "ထွက်": "ထွက်ဆိုတာဇမ္ဗနဂိုရ်ပြည်ကသင်္ဘောစထွက်တာကိုပြောတာပါ။ ကောင်းမွန်သောမိတ်ဆွေသစ်များ တိုးမည်။ စပ်တူရှယ်ယာလုပ်ငန်းများလုပ်ရမည့်အချိန်ကောင်းပါ။ပြည်တွင်း၊ပြည်ပခရီးများသွားရမည်။ နိုင်ငံခြားကုန်လုပ်ငန်းများ အောင်မြင်မည်။",
+            "ပျက်": "ပျက်ဆိုတာ သင်္ဘောပျက်သွားတာကိုပြောတာပါ။ ကံဇာတာညံ့ချိန်ပါ။ စီးပွားရေးကျဆင်းမယ်။ သူများမကောင်းကြံတာခံရတတ်သည်။ မတော်တဆထိခိုက်မှုအသေးအဖွဲများကြုံတတ်သလို သေကောင်ပေါင်းလဲဝေဒနာများ ဖြစ်တတ်သည်။ ရာထူးလုပ်ငန်းကိုနှောင့်ယှက်မည့်သူ ပေါ်လာလိမ့်မည်။ အိမ်ထောင်ရေးကို အထူးသတိထားပါ။",
+            "ကျောက်": "ကျောက်ဆိုတာမေခလာနတ်သမီးက ကျောက်ဖျာထက်မှာတင်ပေးထားတဲ့ ကိန်းဆိုက်ပြီဆိုတော့ ကံကောင်းပြီလို့မှတ်ပါ။ မမျှော်လင့်ပဲကူညီမယ့်သူတွေပေါ်မယ်။ အောင်ပါလေသိန်းထီဆုကြီးများ ပေါက်မည်။ မကျန်းမမာဖြစ်နေရင်တော့ ပြန်ပြီးကျန်းမာလာမည်။ ဆရာကောင်းနဲ့တွေ့ပြီလို့ဟောပါ။ အမှုရှိရင်ရှိနိုင်မည်။ အချုပ်နှောင်ခံနေရရင်လွတ်မည်။ ကျဆင်းနေသောစီးပွားရေးများ ပြန်တက်လာမည်။ ပညာရေးလဲကောင်းမည်။ အိမ်ထောင်ကျလျှင် အိမ်ထောင်ဖက်ကောင်းနှင့်တွေ့ပြီလို့ဟောပါ။ အကြံအစည်များ အောင်မြင်မည်။",
+            "ထီး": "ထီးဆိုတာ ထီးဖြူဆောင်းတဲ့ကိန်းပါ။ နာမည်ကျော်ကြားထင်ရှားမည်။ ကောင်းသတင်းနှင့် ကျော်ကြားခြင်းပါ။ ဆုလာဘ်တွေရမည်။ ဘွဲ့ထူးဂုဏ်ထူးများရမည်။ စာမေးပွဲဖြေထားရင် စာမေးပွဲအောင်မည်။ ရာထူးတိုးမည်။ စီးပွားရေးလုပ်ငန်းများ တိုးချဲ့ရမည်။ အိမ်သစ်ဆောက်ကိန်း၊ အိမ်သစ်ရကိန်းပေါ်မည်။",
+            "နန်း": "နန်းဆိုတာ နန်းအပ်ခံရတဲ့ကိန်းပါ။ ကံဇာတာကောင်းပြီလို့ဟောပါ။ ရာထူးတိုးမည်။ စီးပွားဖြစ်ထွန်းမည်။ အမွေအနှစ်တွေရမည်။ အပြိုင်အဆိုင်တွေမှာ အနိုင်ရမည်။ ရွေးကောက်ပွဲတွေမှာဝင်ရောက်ယှဉ်ပြိုင်ရင်နိုင်မည်။ အိမ်ထောင်ကျကိန်းရှိသည်။ အိမ်ထောင်ကျလျှင်လဲ ကံကောင်းမည်။ အလှူပြုလုပ်ရမည်။ မင်းစိုးရာဇာအကြီးအကဲဖြစ်မည်။",
+            "စံ": "စံဆိုတာ မင်းစည်းစိမ်ကိုခံယူရတဲ့ကိန်းပါ။ ဘေးအန္တာရာယ်ကင်းပြီး စုတ်ကြီး၊လာဘ်ကြီးတွေဝင်မည်။ လုပ်ငန်းတွေတိုးတက်မည်။ ကြီးမားတဲ့ရာထူးတွေရမည်။ သိုလှောင်ပစ္စည်းတွေကအကျိုးအမြတ်ရမည်။ အခြွေအရံမိတ်ဆွေအပေါင်း အသင်းတိုးမည်။ ငွေကြေးစုဆောင်းမိမည်။"
+        },
+        pa: {
+            "တည်": "တည် ကရိုꩻနဝ်ꩻ တဲႏဆို့ꩻမာꩻစသင်္ဘောꩻရိုꩻဗာႏနဝ်ꩻသွူ ။ အဝ်ႏကျံႏစထာꩻမာꩻအတွင်ꩻ အဝ်ႏတွိုႏအီႏမာꩻစထာꩻမာꩻခွင်ႏအခေႏနေႏကိုသွူ ။ ထာꩻမာꩻခွင်ႏအတာႏ အနီꩻအရင်ꩻယို ကုဲင်းထိုမ်ႏမော့ꩻယိုꩻယိုꩻဒါႏ ၊ ထာꩻမာꩻခွင်ႏအကျံႏအဉာဏ်ဖုံႏကုဲင်းအောင်ႏဒါႏ ၊ မိဉ်ႏထိုမ်ႏဒါႏထာꩻမာꩻလဲ့ ကုဲင်းမော့ꩻယိုꩻဒါႏ ၊ မိဉ်ႏဆျောက်ခါꩻထာꩻမာꩻလဲ့ကုဲင်းလꩻဒါႏ ၊ အမုꩻကိစ္စဖုံႏ ၊ထာꩻမာꩻဖုံႏကုဲင်းအာဒါႏသွူ ။ ရွဉ်နွို့အာလဲ့ ရွဉ်ထန်ႏကုဲင်းအာဒါႏသွူ ။",
+            "ထွက်": "ထွက် ကရိုꩻနဝ်ꩻ အဝ်ႏဇမ္ဗူနဂိုရ်ႏခမ်း သင်္ဘောꩻအီႏထန်ႏစ ရိုꩻဗာႏနဝ်ꩻသွူ ။ ကုဲင်ꩻမော့ꩻဒါႏသွꩻဟဝ်သွꩻဒါႏဖုံႏ၊ စပ်တူရှယ်ယာထာꩻမာꩻခွင်ႏအခိန်ႏဟဝ်သွူ ။ ခမ်းကို ခမ်းထန်ႏတဖူꩻဖုံႏတဲ့ကုဲင်းလွေꩻဗာႏဒါႏ ၊ ခမ်းတပြက်ꩻသားကွုန်ႏထာꩻမာꩻဖုံႏတဲ့ ကုဲင်းအောင်ႏမျင်ႏဒါႏသွူ ။",
+            "ပျက်": "ပျက် ကရိုꩻနဝ်ꩻ ဇနကသင်္ဘောꩻပꩻကုဲင်ခိန်ႏသွူဩ ။ ကံႏဇာႏတာႏညမ်းခိန်ႏ ၊ စီꩻပွါꩻရေꩻကုဲင်းထဲ့သွူမ်ꩻဒါႏ ၊ဝင်ꩻကုဲင်းကျံႏတကုဲင်ဒါႏလိုꩻသွူ ။ ထာꩻတရော့ꩻတဝ်း ထိခွိုက်မုꩻဖုံႏတဲ့ကုဲင်းကျုံႏဒါႏ ၊ ထိခွိုက်မုꩻအတဝ်ဖုံႏလဲ့ကုဲင်းမော့ꩻဒါႏသွူ ၊ (ရာထူး)အရာႏ ထာꩻမာꩻခွင်ႏယို နွို့ဆျုတ်သားကုဲင်းပေါႏလွဉ်ဒါႏသွူ ။ နားဟွုန်ꩻရေꩻယို အွဉ်ႏသွော့သꩻတိꩻဩ။",
+            "ကျောက်": "ကျောက် ကရိုꩻနဝ်ꩻ တွိုႏလွေꩻအဝ်ႏဒင်ႏထိုꩻ မေခလာနင်ꩻလူꩻမူႏ ကျောက်ဖျာ လုံးလောင်းတဲင် ရိုꩻဗာႏကံႏဟဝ်လွဉ်သွူဩ။ တမောင်ꩻကော့ꩻဗာႏတဝ်းစွဲးကမ်းသား ပေါႏလွဉ်ဒါႏ ၊ ကုဲင်းပေါက်ဒါႏ ထီဆုꩻ ၊ မိဉ်ႏအုံအဝ်ႏခြွိုင်ႏတဝ်း ကုဲင်းခြွိုင်ႏလွဉ်ချာဒါႏသွူ။ ကုဲင်းမော့ꩻဒါႏဆရာႏဟဝ် ၊ မိဉ်ႏမော့ꩻအမုꩻတဲ့ကုဲင်းနွောင်ꩻဒါႏ ၊ မိဉ်ႏအဝ်ႏခံအချွုတ်လဲ့ကုဲင်းလွစ်ဒါႏ ၊ ကထဲ့သွူမ်ꩻဒါႏစီꩻပွါꩻရေꩻဖုံႏလဲ့ ကုဲင်းအောင်ႏလွဉ်ဖျင်ဒါႏသွူ ၊ ပညာႏရေꩻလဲ့ဟဝ် ၊ မိဉ်ႏတောႏလမ်းဒါႏထာꩻလဲ့ ကုဲင်းမော့ꩻဒါႏ အိန်ႏထောင်ႏဖက်ဟဝ်ဖုံႏ ၊ ထာꩻကျံႏဖုံႏတဲ့ကုဲင်းအောင်ႏမျင်ႏဒါႏသွူ ။",
+            "ထီး": "ထီး ကရိုꩻနဝ်ꩻ အဝ်ႏကင်းဗာႏ ထီꩻဗွါကိန်ꩻသွူ ။ မိဉ်ꩻကုဲင်းကျောႏတင်ႏဆျာꩻဒါႏတောမ်ႏအဟဝ်ဖဲ့ꩻသွူ ၊ ကုဲင်းလꩻဒါႏ ဆုလာဘ်ဖုံႏ ၊ဘွဲ့ထူႏဂွုဏ်ႏဖုံႏ ၊ မိဉ်ႏဖြေႏလိတ်သားတဲ့ ကုဲင်းအောင်ႏဒါႏသွူ ၊ အရာႏဖုံႏကုဲင်းထင်ႏဒါႏ ၊ ကုဲင်းခြဲ့ꩻလုဲင်းဗာႏဒါႏထာꩻမာꩻခွင်ႏဖုံႏ ၊ ကုဲင်းလꩻဒါႏ ကုဲင်းမာꩻဒါႏလမ်းဟဝ်ဖုံႏသွူ ။",
+            "နန်း": "နန်း ကရိုꩻနဝ်ꩻ အဝ်ႏလက်ခံႏဝင်ꩻဖေႏအပ် ဟော်နန်ꩻ ကိန်ꩻသွူ။ အရာႏဖုံႏထင်ႏဒါႏ ၊စီꩻပွါꩻဖုံႏတဲ့ထွာမွေး ၊ လꩻဒါႏအမွီႏဟဝ်ဖုံႏ ၊ ပြဲင်ႏဖက်ဖုံႏကိုတဲ့ ကုဲင်းအောင်ႏဒါႏသွူ ။ မိဉ်ႏနွို့ပြဲင်ႏ လွိုက်ရွေꩻပွယ်ꩻတဲ့ကုဲင်းအောင်ႏဒါႏ ၊ မိဉ်ႏထွာလိုꩻယွဲး ကုဲင်းတောႏလမ်းဒါႏထာꩻ ၊ မိဉ်ႏတောႏလမ်း ကံႏဟဝ်ဒါႏ ၊ ကုဲင်းမာꩻဗာႏဒါႏ အလူႏအတန်ꩻ ၊ ကုဲင်းထွာဒါႏ အတန်အကဲႏဖုံႏသွူ ။",
+            "စံ": "စံ ကရိုꩻနဝ်ꩻ အဝ်ႏစံႏစာꩻဗာႏ ခွန်သီးအစေꩻစိန်ႏ ကိန်ꩻသွူ ။ ဘေꩻအန္တရဲႏတဲ့ကင်ꩻ ၊ စုတ်လဘ်ဖုံႏတဲ့ဟဝ် ၊ ထာꩻမာꩻခွင်ႏဖုံႏတဲ့ကုဲင်းတိုꩻတက်ထင်ႏထိုဒါႏသွူ ၊ကုဲင်းလꩻဒါႏအရာႏတန်ဖုံႏသွူ ။ ကခွူမ်ခါꩻ ကစုခါꩻ ထာꩻခြိုꩻဖုံႏ ကုဲင်းလꩻဒါႏအကျိုꩻအမျတ်ဖုံႏ၊ သွꩻဟဝ်အချွေႏအရံႏဖုံႏတဲ့အာဒါႏ ၊ ကုဲင်ꩻစုဗာႏဟဝ်ဒါႏရွဉ်ဖုံႏသွူ ။"
+        }
+    };
+
+    function changeLang(lang) {
+        currentLang = lang;
+        const t = translations[lang];
+        document.getElementById('mainTitle').innerText = t.title;
+        document.getElementById('placeholder').innerText = t.placeholder;
+        document.getElementById('instruction').innerText = t.instruction;
+        document.getElementById('optDefault').innerText = t.optDefault;
+        
+        const days = ["optSun", "optMon", "optTue", "optWed", "optThu", "optFri", "optSat"];
+        days.forEach((id, i) => document.getElementById(id).innerText = t.days[i]);
+
+        // About us text update
+        document.getElementById('aboutText').innerText = t.about;
+        document.getElementById('aboutAuthor').innerText = t.author;
+        
+        // Hide result when switching lang
+        document.getElementById('result').style.display = "none";
+    }
 
     function updateImage() {
         const day = document.getElementById('dayPicker').value;
@@ -123,7 +181,7 @@
 
     function showFortune(type) {
         document.getElementById('resTitle').innerText = "** " + type + " **";
-        document.getElementById('resBody').innerText = fortunes[type];
+        document.getElementById('resBody').innerText = fortunes[currentLang][type];
         document.getElementById('result').style.display = "block";
         document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
     }
@@ -133,11 +191,9 @@
         modal.style.display = (modal.style.display === "block") ? "none" : "block";
     }
 
-    // Modal အပြင်ဘက်ကိုနှိပ်ရင် ပိတ်ပေးရန်
-    window.onclick = function(event) {
-        const modal = document.getElementById('aboutModal');
-        if (event.target == modal) { modal.style.display = "none"; }
-    }
+    // Init with default MY
+    window.onload = () => changeLang('my');
+    window.onclick = (e) => { if (e.target.className === 'modal') toggleAbout(); }
 </script>
 
 </body>
