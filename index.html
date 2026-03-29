@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="my">
-<head>
+<head><link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d4af37">
+
+<script>
+  if ('service worker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Failed', err));
+    });
+  }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရိုးရာ ဟောစာတမ်း</title>
