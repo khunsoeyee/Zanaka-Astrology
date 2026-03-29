@@ -5,81 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရိုးရာ အသက်အလိုက် ဟောစတမ်း</title>
     <style>
-        :root {
-            --primary-color: #d4af37;
-            --bg-color: #f4f1ea;
-        }
-        body {
-            font-family: 'Pyidaungsu', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 100%;
-            border-top: 5px solid var(--primary-color);
-        }
-        h2 { text-align: center; color: #5a4a1a; }
+        :root { --primary-color: #d4af37; --bg-color: #f4f1ea; }
+        body { font-family: 'Pyidaungsu', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; line-height: 1.6; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; border-top: 5px solid var(--primary-color); }
+        h2 { text-align: center; color: #5a4a1a; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
-        select, input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; transition: 0.3s; margin-top: 10px; font-weight: bold; }
         button:hover { background-color: #b8962d; }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-        }
-        .result-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #d32f2f;
-            text-align: center;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .highlight { color: #d4af37; font-weight: bold; }
+        #result { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; border: 1px solid #ddd; }
+        .result-header { font-size: 22px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+        .status-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: var(--primary-color); color: white; margin-bottom: 15px; }
+        .desc { text-align: justify; color: #333; }
+        .highlight { color: #d32f2f; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>ဗေဒင်ဟောစတမ်း တွက်ချက်ရန်</h2>
-    <hr>
     
     <div class="form-group">
         <label>မွေးနေ့ ရွေးချယ်ပါ</label>
         <select id="birthDay">
-            <option value="0">တနင်္ဂနွေ</option>
-            <option value="1">တနင်္လာ</option>
-            <option value="2">အင်္ဂါ</option>
-            <option value="3">ဗုဒ္ဓဟူး</option>
-            <option value="4">ကြာသပတေး</option>
-            <option value="5">သောကြာ</option>
-            <option value="6">စနေ</option>
+            <option value="sun">တနင်္ဂနွေ</option>
+            <option value="mon">တနင်္လာ</option>
+            <option value="tue">အင်္ဂါ</option>
+            <option value="wed">ဗုဒ္ဓဟူး</option>
+            <option value="thu">ကြာသပတေး</option>
+            <option value="fri">သောကြာ</option>
+            <option value="sat">စနေ</option>
         </select>
     </div>
 
@@ -91,9 +47,9 @@
     <button onclick="calculateFortune()">ဟောစတမ်းကြည့်မည်</button>
 
     <div id="result">
-        <span class="result">ရောက်ရှိနေသောကိန်း - <span id="statusName" class="highlight"></span></span>
+        <div class="result-header">ရောက်ရှိနေသောကိန်း - <span id="statusName" class="highlight"></span></div>
         <hr>
-        <div id="fortuneText"></div>
+        <p id="fortuneText" class="desc"></p>
     </div>
 </div>
 
@@ -101,42 +57,66 @@
     const fortunes = {
         "တည်": "တည်ဆိုတာသင်္ဘောတည်ဆောက်တာကိုပြောတာပါ။ လုပ်ငန်းတွေအတွက်ကြံစည်ဆဲ၊ လုပ်ငန်းတွေအစပြုဆဲအခြေအနေကိုရောက်နေတယ်လို့ ပြောတာပါ။ လုပ်ငန်းအတွက်ရင်းနှီးမြုပ်နှံဖို့ ရန်ရှာရာတွင်လွယ်ကူလိမ့်မည်။ လုပ်ငန်းအကြံအစည်အောင်မြင်မည်။ အလုပ်ရှာနေလျှင် အလုပ်ရမည်။ အလုပ်လျှောက်ထားလျှင်အလုပ်ရမည်။ အမှုကိစ္စတွေ၊ အလုပ်တွေများမည်။ ငွေဝင်များသလို ငွေထွက်လဲများမည်။",
         "ထွက်": "ထွက်ဆိုတာဇမ္ဗနဂိုရ်ပြည်ကသင်္ဘောစထွက်တာကိုပြောတာပါ။ ကောင်းမွန်သောမိတ်ဆွေသစ်များ တိုးမည်။ စပ်တူရှယ်ယာလုပ်ငန်းများလုပ်ရမည့်အချိန်ကောင်းပါ။ပြည်တွင်း၊ပြည်ပခရီးများသွားရမည်။ နိုင်ငံခြားကုန်လုပ်ငန်းများ အောင်မြင်မည်။",
-        "ပျက်": "ပျက်ဆိုတာ သင်္ဘောပျက်သွားတာကိုပြောတာပါ။ ကံဇာတာညံ့ချိန်ပါ။စီးပွားရေးကျဆင်းမယ်။သူများမကောင်းကြံတာခံရတတ်သည်။ မတော်တဆထိခိုက်မှုအသေးအဖွဲများကြုံတတ်သလို သေကောင် ပေါင်းလဲဝေဒနာများ ဖြစ်တတ်သည်။ရာထူးလုပ်ငန်းကိုနှောင့် ယှက်မည့်သူ ပေါ်လာလိမ့်မည်။ အိမ်ထောင်ရေးကို အထူးသတိထားပါ။",
-        "ကျောက်": "ကျောက်ဆိုတာမေခလာနတ်သမီးက ကျောက်ဖျာထက်မှာတင်ပေးထားတဲ့ ကိန်းဆိုက်ပြီဆိုတော့ ကံကောင်းပြီလို့မှတ်ပါ။ မမျှော်လင့်ပဲကူညီမယ့်သူတွေပေါ်မယ်။အောင်ပါလေသိန်းထီဆုကြီးများ ပေါက်မည်။ မကျန်းမမာဖြစ်နေရင်တော့ ပြန်ပြီးကျန်းမာလာမည်။ ဆရာကောင်းနဲ့တွေ့ပြီလို့ဟောပါ။ အမှုရှိရင်ရှိနိုင်မည်။ အချုပ်နှောင်ခံနေရရင်လွတ်မည်။ကျဆင်းနေသောစီးပွားရေးများ ပြန်တက်လာမည်။ပညာရေးလဲကောင်းမည်။အိမ်ထောင်ကျလျှင် အိမ်ထောင်ဖက်ကောင်းနှင့်တွေ့ပြီလို့ဟောပါ။ အကြံအစည်များ အောင်မြင်မည်။",
-        "ထီး": "ထီးဆိုတာ ထီးဖြူဆောင်းတဲ့ကိန်းပါ။ နာမည်ကျော်ကြားထင်ရှားမည်။ ကောင်းသတင်းနှင့် ကျော်ကြားခြင်းပါ။ဆုလာ ဘ်တွေရမည်။ ဘွဲ့ထူးဂုဏ်ထူးများရမည်။စာမေးပွဲဖြေထားရင် စာမေးပွဲအောင်မည်။ ရာထူးတိုးမည်။ စီးပွားရေးလုပ်ငန်းများ တိုးချဲ့ရမည်။ အိမ်သစ်ဆောက်ကိန်း၊ အိမ်သစ်ရကိန်းပေါ်မည်။",
-        "နန်း": "နန်းဆိုတာ နန်းအပ်ခံရတဲ့ကိန်းပါ။ ကံဇာတာကောင်းပြီလို့ဟောပါ။ ရာထူးတိုးမည်။ စီးပွားဖြစ်ထွန်းမည်။အမွေအနှစ်တွေရမည်။ အပြိုင်အဆိုင်တွေမှာ အနိုင်ရမည်။ ရွေးကောက်ပွဲတွေမှာဝင်ရောက်ယှဉ်ပြိုင်ရင်နိုင်မည်။ အိမ်ထောင် ကျကိန်းရှိသည်။ အိမ်ထောင်ကျလျှင်လဲ ကံကောင်းမည်။ အလှူပြုလုပ်ရမည်။ မင်းစိုးရာဇာအကြီးအကဲဖြစ်မည်။",
-        "စံ": "စံဆိုတာ မင်းစည်းစိမ်ကိုခံယူရတဲ့ကိန်းပါ။ ဘေးအန္တာရာယ်ကင်းပြီး စုတ်ကြီး၊လာဘ်ကြီးတွေဝင်မည်။ လုပ်ငန်းတွေတိုးတက်မည်။ ကြီးမားတဲ့ရာထူးတွေရမည်။ သိုလှောင်ပစ္စည်းတွေကအကျိုးအမြတ်ရမည်။အခြွေအရံမိတ်ဆွေအပေါင်း အသင်းတိုးမည်။ငွေကြေးစုဆောင်းမိမည်။"
+        "ပျက်": "ပျက်ဆိုတာ သင်္ဘောပျက်သွားတာကိုပြောတာပါ။ ကံဇာတာညံ့ချိန်ပါ။ စီးပွားရေးကျဆင်းမယ်။ သူများမကောင်းကြံတာခံရတတ်သည်။ မတော်တဆထိခိုက်မှုအသေးအဖွဲများကြုံတတ်သလို သေကောင်ပေါင်းလဲဝေဒနာများ ဖြစ်တတ်သည်။ ရာထူးလုပ်ငန်းကိုနှောင့်ယှက်မည့်သူ ပေါ်လာလိမ့်မည်။ အိမ်ထောင်ရေးကို အထူးသတိထားပါ။",
+        "ကျောက်": "ကျောက်ဆိုတာမေခလာနတ်သမီးက ကျောက်ဖျာထက်မှာတင်ပေးထားတဲ့ ကိန်းဆိုက်ပြီဆိုတော့ ကံကောင်းပြီလို့မှတ်ပါ။ မမျှော်လင့်ပဲကူညီမယ့်သူတွေပေါ်မယ်။ အောင်ပါလေသိန်းထီဆုကြီးများ ပေါက်မည်။ မကျန်းမမာဖြစ်နေရင်တော့ ပြန်ပြီးကျန်းမာလာမည်။ ဆရာကောင်းနဲ့တွေ့ပြီလို့ဟောပါ။ အမှုရှိရင်ရှိနိုင်မည်။ အချုပ်နှောင်ခံနေရရင်လွတ်မည်။ ကျဆင်းနေသောစီးပွားရေးများ ပြန်တက်လာမည်။ ပညာရေးလဲကောင်းမည်။ အိမ်ထောင်ကျလျှင် အိမ်ထောင်ဖက်ကောင်းနှင့်တွေ့ပြီလို့ဟောပါ။ အကြံအစည်များ အောင်မြင်မည်။",
+        "ထီး": "ထီးဆိုတာ ထီးဖြူဆောင်းတဲ့ကိန်းပါ။ နာမည်ကျော်ကြားထင်ရှားမည်။ ကောင်းသတင်းနှင့် ကျော်ကြားခြင်းပါ။ ဆုလာဘ်တွေရမည်။ ဘွဲ့ထူးဂုဏ်ထူးများရမည်။ စာမေးပွဲဖြေထားရင် စာမေးပွဲအောင်မည်။ ရာထူးတိုးမည်။ စီးပွားရေးလုပ်ငန်းများ တိုးချဲ့ရမည်။ အိမ်သစ်ဆောက်ကိန်း၊ အိမ်သစ်ရကိန်းပေါ်မည်။",
+        "နန်း": "နန်းဆိုတာ နန်းအပ်ခံရတဲ့ကိန်းပါ။ ကံဇာတာကောင်းပြီလို့ဟောပါ။ ရာထူးတိုးမည်။ စီးပွားဖြစ်ထွန်းမည်။ အမွေအနှစ်တွေရမည်။ အပြိုင်အဆိုင်တွေမှာ အနိုင်ရမည်။ ရွေးကောက်ပွဲတွေမှာဝင်ရောက်ယှဉ်ပြိုင်ရင်နိုင်မည်။ အိမ်ထောင်ကျကိန်းရှိသည်။ အိမ်ထောင်ကျလျှင်လဲ ကံကောင်းမည်။ အလှူပြုလုပ်ရမည်။ မင်းစိုးရာဇာအကြီးအကဲဖြစ်မည်။",
+        "စံ": "စံဆိုတာ မင်းစည်းစိမ်ကိုခံယူရတဲ့ကိန်းပါ။ ဘေးအန္တာရာယ်ကင်းပြီး စုတ်ကြီး၊လာဘ်ကြီးတွေဝင်မည်။ လုပ်ငန်းတွေတိုးတက်မည်။ ကြီးမားတဲ့ရာထူးတွေရမည်။ သိုလှောင်ပစ္စည်းတွေကအကျိုးအမြတ်ရမည်။ အခြွေအရံမိတ်ဆွေအပေါင်း အသင်းတိုးမည်။ ငွေကြေးစုဆောင်းမိမည်။"
     };
 
     const sequence = ["တည်", "ထွက်", "ပျက်", "ကျောက်", "ထီး", "နန်း", "စံ"];
+    
+    // နေ့အလိုက် စမှတ် (Offset) များ
+    const dayOffsets = {
+        "sun": 0, // ၁ ကနေစ (တည်)
+        "mon": 6, // ၂ ကနေစ (စံ/တည် ကြား) -> ဇယားအရ ၂ သည် 'တည်'
+        "tue": 5, // ၃ ကနေစ
+        "wed": 4, // ၄ ကနေစ
+        "thu": 3, // ၅ ကနေစ
+        "fri": 2, // ၆ ကနေစ
+        "sat": 1  // ၇ ကနေစ
+    };
 
     function calculateFortune() {
-        const birthDay = parseInt(document.getElementById('birthDay').value);
+        const day = document.getElementById('birthDay').value;
         const age = parseInt(document.getElementById('age').value);
 
         if (!age || age < 1) {
-            alert("ကျေးဇူးပြု၍ အသက်ကို မှန်ကန်စွာရိုက်ထည့်ပါ။");
+            alert("အသက်ကို မှန်ကန်စွာရိုက်ထည့်ပါ။");
             return;
         }
 
-        // မဟာဘုတ်တွက်နည်းအရ အသက်ကို ၇ နှင့်စားပြီး ကြွင်းတာရှာရသော်လည်း 
-        // ပေးထားသော ဇယားအရ (အသက် + မွေးနေ့နံ) ကို ၇ နှင့်စားခြင်းဖြင့် ကိန်းရှာနိုင်သည်
-        // တနင်္ဂနွေ = ၁၊ တနင်္လာ = ၂ စသဖြင့်...
-        let dayValue = birthDay + 1;
-        let remainder = (age + dayValue - 1) % 7;
+        // နေ့အလိုက် တွက်ချက်ပုံ
+        let startNum;
+        switch(day) {
+            case "sun": startNum = 1; break;
+            case "mon": startNum = 2; break;
+            case "tue": startNum = 3; break;
+            case "wed": startNum = 4; break;
+            case "thu": startNum = 5; break;
+            case "fri": startNum = 6; break;
+            case "sat": startNum = 7; break;
+        }
+
+        // ဇယားကွက်ထဲမှာ အကွက်ရွှေ့ပုံ logic ( (Age - StartNum) % 7 )
+        let diff = age - startNum;
+        if (diff < 0) {
+            // အသက်က စမှတ်ထက်ငယ်နေရင် (ဥပမာ- တနင်္လာသမီး အသက် ၁ နှစ်)
+            // ဒါမျိုးက ဇယားထဲမှာမပါပေမယ့် logic အရ နောက်ပြန်တွက်ပေးရပါမယ်
+            diff = (diff % 7 + 7) % 7;
+        }
         
-        // ဇယားကွက်အတိုင်း အညွှန်းရှာခြင်း
-        let status = sequence[remainder];
+        let index = diff % 7;
+        let status = sequence[index];
 
         document.getElementById('statusName').innerText = status;
         document.getElementById('fortuneText').innerText = fortunes[status];
         
         let resDiv = document.getElementById('result');
         resDiv.style.display = 'block';
-        resDiv.style.backgroundColor = (status === "ပျက်") ? "#ffebee" : "#f1f8e9";
+        resDiv.style.backgroundColor = (status === "ပျက်") ? "#fff5f5" : "#fdfbf4";
     }
 </script>
 
 </body>
 </html>
-
