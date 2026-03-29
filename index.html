@@ -5,29 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရိုးရာ အသက်အလိုက် ဟောစတမ်း</title>
     <style>
-        :root { --primary-color: #d4af37; --bg-color: #f4f1ea; }
-        body { font-family: 'Pyidaungsu', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; line-height: 1.6; }
-        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; border-top: 5px solid var(--primary-color); }
-        h2 { text-align: center; color: #5a4a1a; margin-bottom: 20px; }
+        :root { --primary-color: #d4af37; --bg-color: #f8f5f0; }
+        body { font-family: 'Pyidaungsu', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 15px; line-height: 1.6; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 500px; width: 100%; border-top: 8px solid var(--primary-color); }
+        h2 { text-align: center; color: #5a4a1a; margin-bottom: 20px; font-size: 24px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; transition: 0.3s; margin-top: 10px; font-weight: bold; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
+        select, input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+        select:focus, input:focus { border-color: var(--primary-color); }
+        button { width: 100%; padding: 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; transition: 0.3s; margin-top: 15px; font-weight: bold; }
         button:hover { background-color: #b8962d; }
-        #result { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; border: 1px solid #ddd; }
-        .result-header { font-size: 22px; font-weight: bold; text-align: center; margin-bottom: 10px; }
-        .status-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: var(--primary-color); color: white; margin-bottom: 15px; }
-        .desc { text-align: justify; color: #333; }
-        .highlight { color: #d32f2f; }
+        #result { margin-top: 25px; padding: 20px; border-radius: 12px; display: none; border: 1px solid #e0e0e0; background: #fffdf5; }
+        .result-header { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 15px; color: #222; }
+        .status-text { color: #d32f2f; font-size: 24px; font-weight: bold; }
+        .desc { text-align: justify; color: #333; font-size: 17px; line-height: 1.8; }
+        .footer { text-align: center; font-size: 12px; color: #999; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>ဗေဒင်ဟောစတမ်း တွက်ချက်ရန်</h2>
+    <h2>ဗေဒင်ဟောစတမ်း</h2>
     
     <div class="form-group">
-        <label>မွေးနေ့ ရွေးချယ်ပါ</label>
+        <label>မွေးနေ့</label>
         <select id="birthDay">
             <option value="sun">တနင်္ဂနွေ</option>
             <option value="mon">တနင်္လာ</option>
@@ -40,17 +41,18 @@
     </div>
 
     <div class="form-group">
-        <label>ရောက်ဆဲအသက် (နှစ်)</label>
-        <input type="number" id="age" placeholder="ဥပမာ - ၂၅" min="1">
+        <label>ရောက်ဆဲအသက်</label>
+        <input type="number" id="age" placeholder="ဥပမာ - ၂၀" min="1">
     </div>
 
-    <button onclick="calculateFortune()">ဟောစတမ်းကြည့်မည်</button>
+    <button onclick="calculate()">ဟောစတမ်းကြည့်မည်</button>
 
     <div id="result">
-        <div class="result-header">ရောက်ရှိနေသောကိန်း - <span id="statusName" class="highlight"></span></div>
+        <div class="result-header">ရောက်ရှိနေသောကိန်း - <span id="statusName" class="status-text"></span></div>
         <hr>
-        <p id="fortuneText" class="desc"></p>
+        <div id="fortuneText" class="desc"></div>
     </div>
+    <div class="footer">KSY-BLOG Project</div>
 </div>
 
 <script>
@@ -65,56 +67,50 @@
     };
 
     const sequence = ["တည်", "ထွက်", "ပျက်", "ကျောက်", "ထီး", "နန်း", "စံ"];
-    
-    // နေ့အလိုက် စမှတ် (Offset) များ
-    const dayOffsets = {
-        "sun": 0, // ၁ ကနေစ (တည်)
-        "mon": 6, // ၂ ကနေစ (စံ/တည် ကြား) -> ဇယားအရ ၂ သည် 'တည်'
-        "tue": 5, // ၃ ကနေစ
-        "wed": 4, // ၄ ကနေစ
-        "thu": 3, // ၅ ကနေစ
-        "fri": 2, // ၆ ကနေစ
-        "sat": 1  // ၇ ကနေစ
-    };
 
-    function calculateFortune() {
+    function calculate() {
         const day = document.getElementById('birthDay').value;
         const age = parseInt(document.getElementById('age').value);
 
-        if (!age || age < 1) {
-            alert("အသက်ကို မှန်ကန်စွာရိုက်ထည့်ပါ။");
+        if (!age) return;
+
+        // နေ့အလိုက် စမှတ် (ဇယားထဲက ပထမဆုံးအကွက်ရဲ့ အသက်)
+        let startAge;
+        switch(day) {
+            case "sun": startAge = 1; break;
+            case "mon": startAge = 2; break;
+            case "tue": startAge = 3; break;
+            case "wed": startAge = 4; break;
+            case "thu": startAge = 5; break;
+            case "fri": startAge = 6; break;
+            case "sat": startAge = 7; break;
+        }
+
+        // တွက်ချက်ပုံ Logic:
+        // အသက်သည် စမှတ်ထက်ကြီးရမည်။ ခြားနားချက်ကိုယူပြီး ၇ ကွက်ထဲမှာ ဘယ်နေရာရောက်လဲရှာမည်။
+        // ဥပမာ- တနင်္လာ (Start: 2), အသက် ၂၀ ဆိုရင် (20-2) = 18.
+        // 18 ကို 7 နဲ့စားရင် အကြွင်း 4 ရသည်။ 
+        // သို့သော် ဇယားက ၂ ကွက်စီ ခုန်နေသဖြင့် (18/2) % 7 = 9 % 7 = 2 (ပျက်) အတိအကျရပါသည်။
+        
+        let diff = age - startAge;
+        if (diff < 0) {
+            alert("ဤအသက်အတွက် ဇယားမရှိပါ။");
             return;
         }
 
-        // နေ့အလိုက် တွက်ချက်ပုံ
-        let startNum;
-        switch(day) {
-            case "sun": startNum = 1; break;
-            case "mon": startNum = 2; break;
-            case "tue": startNum = 3; break;
-            case "wed": startNum = 4; break;
-            case "thu": startNum = 5; break;
-            case "fri": startNum = 6; break;
-            case "sat": startNum = 7; break;
-        }
-
-        // ဇယားကွက်ထဲမှာ အကွက်ရွှေ့ပုံ logic ( (Age - StartNum) % 7 )
-        let diff = age - startNum;
-        if (diff < 0) {
-            // အသက်က စမှတ်ထက်ငယ်နေရင် (ဥပမာ- တနင်္လာသမီး အသက် ၁ နှစ်)
-            // ဒါမျိုးက ဇယားထဲမှာမပါပေမယ့် logic အရ နောက်ပြန်တွက်ပေးရပါမယ်
-            diff = (diff % 7 + 7) % 7;
-        }
+        let index = (diff / 2) % 7;
         
-        let index = diff % 7;
-        let status = sequence[index];
-
-        document.getElementById('statusName').innerText = status;
-        document.getElementById('fortuneText').innerText = fortunes[status];
+        // အကယ်၍ အသက်က ၁၉ လိုမျိုး မကိန်းဖြစ်နေရင် (တနင်္လာမှာ အသက် ၂၀ က ပျက် ဆိုရင် ၁၉ က ထွက် ဖြစ်ရပါမယ်)
+        // ထို့ကြောင့် Math.floor သုံးပြီး အနီးစပ်ဆုံး အကွက်ကို ယူပါမယ်။
+        let finalIndex = Math.round(index); 
         
-        let resDiv = document.getElementById('result');
-        resDiv.style.display = 'block';
-        resDiv.style.backgroundColor = (status === "ပျက်") ? "#fff5f5" : "#fdfbf4";
+        // Array range ထဲ ပြန်ထည့်ခြင်း
+        finalIndex = finalIndex % 7;
+
+        let resultStatus = sequence[finalIndex];
+        document.getElementById('statusName').innerText = resultStatus;
+        document.getElementById('fortuneText').innerText = fortunes[resultStatus];
+        document.getElementById('result').style.display = 'block';
     }
 </script>
 
