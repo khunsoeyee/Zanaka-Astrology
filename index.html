@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="my">
-<head><link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#d4af37">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d4af37">
 
-<script>
-  if ('service worker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker Registered'))
-        .catch(err => console.log('Service Worker Failed', err));
-    });
-  }
-</script>
+    <script>
+        if ('service worker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker Registered'))
+                    .catch(err => console.log('Service Worker Failed', err));
+            });
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရိုးရာ ဟောစာတမ်း</title>
@@ -47,9 +48,12 @@
         .btn-fortune:hover { background: var(--primary-color); }
 
         /* Blogger-style Result Post */
-        #result { padding: 25px; border-radius: 12px; background: var(--soft-gold); border: 1px solid #eedda2; display: none; text-align: justify; margin-bottom: 30px; animation: slideUp 0.5s ease-out; line-height: 1.8; box-shadow: inset 0 0 10px rgba(212,175,55,0.1); }
+        #result { padding: 25px; border-radius: 12px; background: var(--soft-gold); border: 1px solid #eedda2; display: none; text-align: justify; margin-bottom: 30px; animation: slideUp 0.5s ease-out; line-height: 1.8; box-shadow: inset 0 0 10px rgba(212,175,55,0.1); text-align: center; }
         .status-title { font-weight: bold; color: #d32f2f; font-size: 24px; text-align: center; display: block; margin-bottom: 15px; border-bottom: 2px double #eedda2; padding-bottom: 10px; }
-        .post-body { color: #333; font-size: 16px; text-indent: 30px; }
+        
+        /* ဟောစာတမ်းပုံအတွက် style */
+        .fortune-post-image { max-width: 100%; height: auto; border-radius: 8px; border: 2px solid var(--primary-color); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        
         .post-footer { margin-top: 20px; font-style: italic; color: #777; font-size: 13px; text-align: right; border-top: 1px solid #eee; padding-top: 10px; }
 
         .footer-nav { border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 10px; justify-content: center; }
@@ -101,18 +105,18 @@
 
     <p style="font-weight:bold; color:var(--dark-brown); margin-bottom:10px;" id="instruction">မိမိအသက်ရောက်နေသော အကွက်ကိုနှိပ်ပါ</p>
     <div class="button-grid">
-        <button class="btn-fortune" onclick="showFortune('တည်')">တည်</button>
-        <button class="btn-fortune" onclick="showFortune('ထွက်')">ထွက်</button>
-        <button class="btn-fortune" onclick="showFortune('ပျက်')">ပျက်</button>
-        <button class="btn-fortune" onclick="showFortune('ကျောက်')">ကျောက်</button>
-        <button class="btn-fortune" onclick="showFortune('ထီး')">ထီး</button>
-        <button class="btn-fortune" onclick="showFortune('နန်း')">နန်း</button>
-        <button class="btn-fortune" onclick="showFortune('စံ')">စံ</button>
+        <button class="btn-fortune" onclick="showFortune('ti')">တည် / တီ</button>
+        <button class="btn-fortune" onclick="showFortune('htwet')">ထွက် / ထန်ႏ</button>
+        <button class="btn-fortune" onclick="showFortune('pyet')">ပျက် / ပြပြင်ꩻ</button>
+        <button class="btn-fortune" onclick="showFortune('kyauk')">ကျောက် / လုံး</button>
+        <button class="btn-fortune" onclick="showFortune('htee')">ထီး / ထီး</button>
+        <button class="btn-fortune" onclick="showFortune('nan')">နန်း / နန်ꩻ</button>
+        <button class="btn-fortune" onclick="showFortune('san')">စံ / စံႏ</button>
     </div>
 
     <div id="result">
         <span id="resTitle" class="status-title"></span>
-        <div id="resBody" class="post-body"></div>
+        <img id="resImage" class="fortune-post-image" src="" alt="ဟောစာတမ်းရလဒ်">
         <div class="post-footer" id="postFooter">ကံကြမ္မာသည် သင်၏ ကြိုးစားအားထုတ်မှုပေါ်တွင်လည်း မူတည်ပါသည်။</div>
     </div>
 
@@ -131,7 +135,7 @@
 </div>
 
 <script>
-    let currentLang = 'my';
+    let currentLang = 'my'; // လက်ရှိ ဘာသာစကားကို မှတ်သားရန်
 
     const translations = {
         my: {
@@ -145,7 +149,14 @@
             calcLabel: "မွေးသက္ကရာဇ်ဖြင့် အသက်တွက်ရန်",
             calcBtn: "တွက်မည်",
             calcPlace: "ဥပမာ - 1995 (သို့) ၁၃၅၇",
-            footer: "ကံကြမ္မာသည် သင်၏ ကြိုးစားအားထုတ်မှုပေါ်တွင်လည်း မူတည်ပါသည်။"
+            footer: "ကံကြမ္မာသည် သင်၏ ကြိုးစားအားထုတ်မှုပေါ်တွင်လည်း မူတည်ပါသည်။",
+            titleTi: "တည် အကွက်",
+            titleHtwet: "ထွက် အကွက်",
+            titlePyet: "ပျက် အကွက်",
+            titleKyauk: "ကျောက် အကွက်",
+            titleHtee: "ထီး အကွက်",
+            titleNan: "နန်း အကွက်",
+            titleSan: "စံ အကွက်"
         },
         pa: {
             title: "ဇနကဟော်ꩻကိန်ꩻ (ပအိုဝ်ႏ)",
@@ -157,29 +168,15 @@
             author: "By ခွန်စိုးရီ - ချို့ꩻထီ",
             calcLabel: "တွက်အသက်တာႏ",
             calcBtn: "တွက်သွော့",
-            calcPlace: "ဥပမာ -  1995 မွေးတဝ်းတဲ့ ၁၃၅၇",
-            footer: "ကံႏဇာႏတာႏယိုနဝ်ꩻ အဝ်ႏဒင်ႏဒျာႏ နီဗွေႏသီး ထာꩻကျိုꩻစာꩻမုꩻသွူဩ။"
-        }
-    };
-
-    const fortunes = {
-        my: {
-            "တည်": "တည် သင်္ဘောတည်ဆောက်ခြင်းဟု အဓိပ္ပာယ်ရပါသည်။ လုပ်ငန်းဆောင်တာများအတွက် အစပျိုးနေချိန် သို့မဟုတ် ကြံစည်နေဆဲ အခြေအနေသို့ ရောက်ရှိနေခြင်း ဖြစ်ပါသည်။ ယခုအချိန်တွင် လုပ်ငန်းအတွက် ရင်းနှီးမြှုပ်နှံရန် အခွင့်အလမ်းများ လွယ်ကူစွာ ပေါ်ပေါက်လာပါလိမ့်မည်။ အလုပ်အကိုင် အကြံအစည်များ အောင်မြင်မည့်ကိန်း ရှိပါသည်။ အလုပ်ရှာဖွေနေသူဖြစ်ပါက အလုပ်ရရှိတတ်ပြီး၊ အလုပ်လျှောက်ထားသူများလည်း ကံကောင်းတတ်ပါသည်။ သို့သော် အမှုကိစ္စများနှင့် အလုပ်များ ရှုပ်ထွေးတတ်ပြီး ငွေဝင်များသလောက် ငွေပြန်ထွက်လည်း မြန်တတ်သောကြောင့် သတိပြုရန် လိုအပ်ပါသည်။",
-            "ထွက်": "ထွက် ဇမ္ဗူနဂိုရ်ပြည်မှ သင်္ဘောစတင်ထွက်ခွာခြင်းကို ဆိုလိုပါသည်။ သင်၏ လူမှုပတ်ဝန်းကျင်တွင် မိတ်ဆွေသစ်များ တိုးပွားလာပါလိမ့်မည်။ စပ်တူရှယ်ယာ လုပ်ငန်းများ လုပ်ကိုင်ရန် အကောင်းဆုံးအချိန် ဖြစ်ပါသည်။ ခရီးဝေးများ သွားရတတ်ပြီး နိုင်ငံခြားနှင့် ဆက်သွယ်သော ကုန်သွယ်မှုလုပ်ငန်းများ အထူးအောင်မြင်ပါလိမ့်မည်။",
-            "ပျက်": "ပျက် သင်္ဘောပျက်သွားသည့် အခြေအနေသို့ ရောက်ရှိနေခြင်း ဖြစ်ပါသည်။ ကံဇာတာ ညံ့နေချိန်ဖြစ်သဖြင့် စီးပွားရေးလုပ်ငန်းများ ကျဆင်းတတ်ပါသည်။ သူတစ်ပါး၏ မကောင်းကြံစည်မှုကို ခံရတတ်သောကြောင့် ဆင်ခြင်ပါ။ မတော်တဆ ထိခိုက်မှု အသေးအဖွဲများမှသည် ကျန်းမာရေး ဝေဒနာများအထိ ကြုံတွေ့ရတတ်ပါသည်။ အလုပ်အကိုင်တွင် နှောင့်ယှက်မည့်သူ ပေါ်လာတတ်သလို အိမ်ထောင်ရေး ကိစ္စများတွင်လည်း အထူးသတိထား ဆောင်ရွက်သင့်သော အချိန်ဖြစ်ပါသည်။",
-            "ကျောက်": "ကျောက် မေခလာနတ်သမီးက ကျောက်ဖျာထက်သို့ တင်ပေးထားသည့်ကိန်း ဖြစ်၍ အထူးကံကောင်းသော အချိန်ဟု မှတ်ယူပါ။ မမျှော်လင့်ဘဲ ကူညီမည့်သူများ ပေါ်လာပါလိမ့်မည်။ ထီဆုကြီးများ ပေါက်တတ်ခြင်း၊ ကျန်းမာရေး ပြန်လည်ကောင်းမွန်လာခြင်းတို့ ကြုံရပါမည်။ အမှုအခင်းရှိပါက အနိုင်ရတတ်ပြီး အချုပ်အနှောင်မှ လွတ်မြောက်တတ်ပါသည်။ ကျဆင်းနေသော စီးပွားရေးများ ပြန်လည်ဦးမော့လာမည့်အပြင် အိမ်ထောင်ဖက်ကောင်းနှင့် ဆုံစည်းရမည့် ကံရှိပါသည်။",
-            "ထီး": "ထီး မင်းသုံးထီးဖြူ ဆောင်းရသည့်ကိန်း ဖြစ်ပါသည်။ နာမည်ကျော်ကြား ထင်ရှားလာပါလိမ့်မည်။ ဂုဏ်ပြုဆုလာဘ်များ ရရှိခြင်း၊ ဘွဲ့ထူးဂုဏ်ထူးများ ချီးမြှင့်ခံရခြင်းတို့ ကြုံရပါမည်။ စာမေးပွဲဖြေဆိုထားသူများ အောင်မြင်တတ်ပြီး ရာထူးတိုးခြင်း၊ စီးပွားချဲ့ထွင်ခြင်းများ ပြုလုပ်နိုင်ပါမည်။ အိမ်သစ်ဆောက်ရန် သို့မဟုတ် အိမ်သစ်ရရန် ကံထူးနေသော အချိန်ဖြစ်ပါသည်။",
-            "နန်း": "နန်း နန်းအပ်နှင်းခံရသည့်ကိန်း ဖြစ်သဖြင့် ကံဇာတာ အလွန်တက်နေပါသည်။ ရာထူးဌာနန္တရများ တိုးတက်ခြင်း၊ အမွေအနှစ်များ ရရှိခြင်းနှင့် အပြိုင်အဆိုင်များတွင် အမြဲအနိုင်ရခြင်းတို့ ကြုံတွေ့ရပါမည်။ ရွေးကောက်ပွဲ သို့မဟုတ် ပြိုင်ပွဲများတွင် ဝင်ရောက်ယှဉ်ပြိုင်ပါက အောင်မြင်ပါမည်။ အိမ်ထောင်ကျကိန်း ရှိပြီး အလှူအတန်းကြီးများ ပြုလုပ်ရတတ်ပါသည်။ အကြီးအကဲအဖြစ် တာဝန်ယူရမည့် အချိန်ကောင်း ဖြစ်ပါသည်။",
-            "စံ": "စံ မင်းစည်းစိမ်ကို ခံစားစံစားရသည့်ကိန်း ဖြစ်ပါသည်။ ဘေးအန္တရာယ်များ ကင်းဝေးပြီး လာဘ်လာဘ အလွန်ကောင်းမည့် အချိန်ဖြစ်ပါသည်။ ရာထူးကြီးများ ရရှိတတ်သလို သိုလှောင်ထားသော ကုန်ပစ္စည်းများမှ အကျိုးအမြတ် အဆမတန် ရရှိပါမည်။ အခြွေအရံ မိတ်ဆွေများ ပေါများလာပြီး ငွေကြေးအမြောက်အမြား စုဆောင်းမိမည့် ကံဇာတာ ဖြစ်ပါသည်။"
-        },
-        pa: {
-            "တည်": "တည် ကရိုꩻနဝ်ꩻ တဲႏဆို့ꩻမာꩻစသင်္ဘောꩻရိုꩻဗာႏနဝ်ꩻသွူ ။ အဝ်ႏကျံႏစထာꩻမာꩻအတွင်ꩻ အဝ်ႏတွိုႏအီႏမာꩻစထာꩻမာꩻခွင်ႏအခေႏနေႏကိုသွူ ။ ထာꩻမာꩻခွင်ႏအတာႏ အနီꩻအရင်ꩻယို ကုဲင်းထိုမ်ႏမော့ꩻယိုꩻယိုꩻဒါႏ ၊ ထာꩻမာꩻခွင်ႏအကျံႏအဉာဏ်ဖုံႏကုဲင်းအောင်ႏဒါႏ ၊ မိဉ်ႏထိုမ်ႏဒါႏထာꩻမာꩻလဲ့ ကုဲင်းမော့ꩻယိုꩻဒါႏ ၊ မိဉ်ႏဆျောက်ခါꩻထာꩻမာꩻလဲ့ကုဲင်းလꩻဒါႏ ၊ အမုꩻကိစ္စဖုံႏ ၊ထာꩻမာꩻဖုံႏကုဲင်းအာဒါႏသွူ ။ ရွဉ်နွို့အာလဲ့ ရွဉ်ထန်ႏကုဲင်းအာဒါႏသွူ ။",
-            "ထွက်": "ထွက် ကရိုꩻနဝ်ꩻ အဝ်ႏဇမ္ဗူနဂိုရ်ႏခမ်း သင်္ဘောꩻအီႏထန်ႏစ ရိုꩻဗာႏနဝ်ꩻသွူ ။ ကုဲင်ꩻမော့ꩻဒါႏသွꩻဟဝ်သွꩻဒါႏဖုံႏ၊ စပ်တူရှယ်ယာထာꩻမာꩻခွင်ႏအခိန်ႏဟဝ်သွူ ။ ခမ်းကို ခမ်းထန်ႏတဖူꩻဖုံႏတဲ့ကုဲင်းလွေꩻဗာႏဒါႏ ၊ ခမ်းတပြက်ꩻသားကွုန်ႏထာꩻမာꩻဖုံႏတဲ့ ကုဲင်းအောင်ႏမျင်ႏဒါႏသွူ ။",
-            "ပျက်": "ပျက် ကရိုꩻနဝ်ꩻ ဇနကသင်္ဘောꩻပꩻကုဲင်ခိန်ႏသွူဩ ။ ကံႏဇာႏတာႏညမ်းခိန်ႏ ၊ စီꩻပွါꩻရေꩻကုဲင်းထဲ့သွူမ်ꩻဒါႏ ၊ဝင်ꩻကုဲင်းကျံႏတကုဲင်ဒါႏလိုꩻသွူ ။ ထာꩻတရော့ꩻတဝ်း ထိခွိုက်မုꩻဖုံႏတဲ့ကုဲင်းကျုံႏဒါႏ ၊ ထိခွိုက်မုꩻအတဝ်ဖုံႏလဲ့ကုဲင်းမော့ꩻဒါႏသွူ ၊ (ရာထူး)အရာႏ ထာꩻမာꩻခွင်ႏယို နွို့ဆျုတ်သားကုဲင်းပေါႏလွဉ်ဒါႏသွူ ။ နားဟွုန်ꩻရေꩻယို အွဉ်ႏသွော့သꩻတိꩻဩ။",
-            "ကျောက်": "ကျောက် ကရိုꩻနဝ်ꩻ တွိုႏလွေꩻအဝ်ႏဒင်ႏထိုꩻ မေခလာနင်ꩻလူꩻမူႏ ကျောက်ဖျာ လုံးလောင်းတဲင် ရိုꩻဗာႏကံႏဟဝ်လွဉ်သွူဩ။ တမောင်ꩻကော့ꩻဗာႏတဝ်းစွဲးကမ်းသား ပေါႏလွဉ်ဒါႏ ၊ ကုဲင်းပေါက်ဒါႏ ထီဆုꩻ ၊ မိဉ်ႏအုံအဝ်ႏခြွိုင်ႏတဝ်း ကုဲင်းခြွိုင်ႏလွဉ်ချာဒါႏသွူ။ ကုဲင်းမော့ꩻဒါႏဆရာႏဟဝ် ၊ မိဉ်ႏမော့ꩻအမုꩻတဲ့ကုဲင်းနွောင်ꩻဒါႏ ၊ မိဉ်ႏအဝ်ႏခံအချွုတ်လဲ့ကုဲင်းလွစ်ဒါႏ ၊ ကထဲ့သွူမ်ꩻဒါႏစီꩻပွါꩻရေꩻဖုံႏလဲ့ ကုဲင်းအောင်ႏလွဉ်ဖျင်ဒါႏသွူ ၊ ပညာႏရေꩻလဲ့ဟဝ် ၊ မိဉ်ႏတောႏလမ်းဒါႏထာꩻလဲ့ ကုဲင်းမော့ꩻဒါႏ အိန်ႏထောင်ႏဖက်ဟဝ်ဖုံႏ ၊ ထာꩻကျံႏဖုံႏတဲ့ကုဲင်းအောင်ႏမျင်ႏဒါႏသွူ ။",
-            "ထီး": "ထီး ကရိုꩻနဝ်ꩻ အဝ်ႏကင်းဗာႏ ထီꩻဗွါကိန်ꩻသွူ ။ မိဉ်ꩻကုဲင်းကျောႏတင်ႏဆျာꩻဒါႏတောမ်ႏအဟဝ်ဖဲ့ꩻသွူ ၊ ကုဲင်းလꩻဒါႏ ဆုလာဘ်ဖုံႏ ၊ဘွဲ့ထူႏဂွုဏ်ႏဖုံႏ ၊ မိဉ်ႏဖြေႏလိတ်သားတဲ့ ကုဲင်းအောင်ႏဒါႏသွူ ၊ အရာႏဖုံႏကုဲင်းထင်ႏဒါႏ ၊ ကုဲင်းခြဲ့ꩻလုဲင်းဗာႏဒါႏထာꩻမာꩻခွင်ႏဖုံႏ ၊ ကုဲင်းလꩻဒါႏ ကုဲင်းမာꩻဒါႏလမ်းဟဝ်ဖုံႏသွူ ။",
-            "နန်း": "နန်း ကရိုꩻနဝ်ꩻ အဝ်ႏလက်ခံႏဝင်ꩻဖေႏအပ် ဟော်နန်ꩻ ကိန်ꩻသွူ။ အရာႏဖုံႏထင်ႏဒါႏ ၊စီꩻပွါꩻဖုံႏတဲ့ထွာမွေး ၊ လꩻဒါႏအမွီႏဟဝ်ဖုံႏ ၊ ပြဲင်ႏဖက်ဖုံႏကိုတဲ့ ကုဲင်းအောင်ႏဒါႏသွူ ။ မိဉ်ႏနွို့ပြဲင်ႏ လွိုက်ရွေꩻပွယ်ꩻတဲ့ကုဲင်းအောင်ႏဒါႏ ၊ မိဉ်ႏထွာလိုꩻယွဲး ကုဲင်းတောႏလမ်းဒါႏထာꩻ ၊ မိဉ်ႏတောႏလမ်း ကံႏဟဝ်ဒါႏ ၊ ကုဲင်းမာꩻဗာႏဒါႏ အလူႏအတန်ꩻ ၊ ကုဲင်းထွာဒါႏ အတန်အကဲႏဖုံႏသွူ ။",
-            "စံ": "စံ ကရိုꩻနဝ်ꩻ  အဝ်ႏစံႏစာꩻဗာႏ ခွန်သီးအစေꩻစိန်ႏ ကိန်ꩻသွူ ။ ဘေꩻအန္တရဲႏတဲ့ကင်ꩻ ၊ စုတ်လဘ်ဖုံႏတဲ့ဟဝ် ၊ ထာꩻမာꩻခွင်ႏဖုံႏတဲ့ကုဲင်းတိုꩻတက်ထင်ႏထိုဒါႏသွူ ၊ကုဲင်းလꩻဒါႏအရာႏတန်ဖုံႏသွူ ။ ကခွူမ်ခါꩻ ကစုခါꩻ ထာꩻခြိုꩻဖုံႏ ကုဲင်းလꩻဒါႏအကျိုꩻအမျတ်ဖုံႏ၊ သွꩻဟဝ်အချွေႏအရံႏဖုံႏတဲ့အာဒါႏ ၊ ကုဲင်ꩻစုဗာႏဟဝ်ဒါႏရွဉ်ဖုံႏသွူ ။"
+            calcPlace: "ဥပမာ - 1995 မွေးတဝ်းတဲ့ ၁၃၅၇",
+            footer: "ကံႏဇာႏတာႏယိုနဝ်ꙓ အဝ်ႏဒင်ႏဒျာႏ နီဗွေႏသီး ထာꙻကျိုꙻစာꙻမုꙻသွူဩ။",
+            titleTi: "တည် (တီ) အကွက်",
+            titleHtwet: "ထွက် (ထန်ႏ) အကွက်",
+            titlePyet: "ပျက် (ပြပြင်ꩻ) အကွက်",
+            titleKyauk: "ကျောက် (လုံး) အကွက်",
+            titleHtee: "ထီး (ထီး) အကွက်",
+            titleNan: "နန်း (နန်ꩻ) အကွက်",
+            titleSan: "စံ (စံႏ) အကွက်"
         }
     };
 
@@ -221,6 +218,8 @@
         dayIds.forEach((id, i) => document.getElementById(id).innerText = t.days[i]);
         document.getElementById('aboutText').innerText = t.about;
         document.getElementById('aboutAuthor').innerText = t.author;
+        
+        // ဘာသာစကားပြောင်းလျှင် ရလဒ်ဟောင်းကို ဝှက်ထားရန်
         document.getElementById('result').style.display = "none";
         document.getElementById('ageDisplay').innerText = "";
     }
@@ -239,11 +238,40 @@
         }
     }
 
+    // စာသားအစား ပုံကို ပြသရန် ပြင်ဆင်ထားသော function
     function showFortune(type) {
-        document.getElementById('resTitle').innerText = "~~~ " + type + " ~~~";
-        document.getElementById('resBody').innerText = fortunes[currentLang][type];
-        document.getElementById('result').style.display = "block";
-        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        const birthday = document.getElementById('dayPicker').value; // နေ့ရွေးထားခြင်း ရှိမရှိ စစ်ရန်
+        if (!birthday) {
+            alert(currentLang === 'my' ? "မွေးနေ့ (နေ့စဉ်ဇယား) အရင်ရွေးချယ်ပေးပါ" : "လွိုက်ရွဲးရီးမွူးနီꩻဖွား");
+            return;
+        }
+
+        const resultContainer = document.getElementById('result');
+        const resultTitle = document.getElementById('resTitle');
+        const resultImage = document.getElementById('resImage');
+        const t = translations[currentLang];
+
+        // ခေါင်းစဉ်တပ်ခြင်း
+        let titleText = "";
+        switch(type) {
+            case 'ti': titleText = t.titleTi; break;
+            case 'htwet': titleText = t.titleHtwet; break;
+            case 'pyet': titleText = t.titlePyet; break;
+            case 'kyauk': titleText = t.titleKyauk; break;
+            case 'htee': titleText = t.titleHtee; break;
+            case 'nan': titleText = t.titleNan; break;
+            case 'san': titleText = t.titleSan; break;
+        }
+        resultTitle.innerText = "~~~ " + titleText + " ~~~";
+
+        // ပုံအမည်ကို logic ဖြင့် တည်ဆောက်ခြင်း (ဥပမာ- images/fortunes/my_ti.png)
+        // ပုံရှိသည့် folder လမ်းကြောင်းကို images/fortunes/ ဟု သတ်မှတ်ထားသည်
+        const imagePath = `images/fortunes/${currentLang}_${type}.png`;
+        resultImage.src = imagePath;
+
+        // ရလဒ်ကို ဖော်ပြခြင်း
+        resultContainer.style.display = "block";
+        resultContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
     function toggleAbout() {
@@ -251,6 +279,7 @@
         modal.style.display = (modal.style.display === "block") ? "none" : "block";
     }
 
+    // Init with default MY
     window.onload = () => changeLang('my');
     window.onclick = (e) => { if (e.target.className === 'modal') toggleAbout(); }
 </script>
