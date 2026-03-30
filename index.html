@@ -105,13 +105,13 @@
 
     <p style="font-weight:bold; color:var(--dark-brown); margin-bottom:10px;" id="instruction">မိမိအသက်ရောက်နေသော အကွက်ကိုနှိပ်ပါ</p>
     <div class="button-grid">
-        <button class="btn-fortune" onclick="showFortune('ti')">တည် / တီ</button>
-        <button class="btn-fortune" onclick="showFortune('htwet')">ထွက် / ထန်ႏ</button>
-        <button class="btn-fortune" onclick="showFortune('pyet')">ပျက် / ပြပြင်ꩻ</button>
-        <button class="btn-fortune" onclick="showFortune('kyauk')">ကျောက် / လုံး</button>
-        <button class="btn-fortune" onclick="showFortune('htee')">ထီး / ထီး</button>
-        <button class="btn-fortune" onclick="showFortune('nan')">နန်း / နန်ꩻ</button>
-        <button class="btn-fortune" onclick="showFortune('san')">စံ / စံႏ</button>
+        <button class="btn-fortune" onclick="showFortune('ti')">တည် </button>
+        <button class="btn-fortune" onclick="showFortune('htwet')">ထွက် </button>
+        <button class="btn-fortune" onclick="showFortune('pyet')">ပျက် </button>
+        <button class="btn-fortune" onclick="showFortune('kyauk')">ကျောက် </button>
+        <button class="btn-fortune" onclick="showFortune('htee')">ထီး </button>
+        <button class="btn-fortune" onclick="showFortune('nan')">နန်း </button>
+        <button class="btn-fortune" onclick="showFortune('san')">စံ </button>
     </div>
 
     <div id="result">
@@ -169,14 +169,14 @@
             calcLabel: "တွက်အသက်တာႏ",
             calcBtn: "တွက်သွော့",
             calcPlace: "ဥပမာ - 1995 မွေးတဝ်းတဲ့ ၁၃၅၇",
-            footer: "ကံႏဇာႏတာႏယိုနဝ်ꙓ အဝ်ႏဒင်ႏဒျာႏ နီဗွေႏသီး ထာꙻကျိုꙻစာꙻမုꙻသွူဩ။",
-            titleTi: "တည် (တီ) အကွက်",
-            titleHtwet: "ထွက် (ထန်ႏ) အကွက်",
-            titlePyet: "ပျက် (ပြပြင်ꩻ) အကွက်",
-            titleKyauk: "ကျောက် (လုံး) အကွက်",
-            titleHtee: "ထီး (ထီး) အကွက်",
-            titleNan: "နန်း (နန်ꩻ) အကွက်",
-            titleSan: "စံ (စံႏ) အကွက်"
+            footer: "ကံႏဇာႏတာႏယိုနဝ်ꩻအဝ်ႏဒင်ႏဒျာႏ နီဗွေႏသီးထာꩻကျိုꩻစာꩻမုꩻအလောင်းသွူဩ။",
+            titleTi: "တည် အကွက်",
+            titleHtwet: "ထွက် အကွက်",
+            titlePyet: "ပျက် အကွက်",
+            titleKyauk: "ကျောက် အကွက်",
+            titleHtee: "ထီး အကွက်",
+            titleNan: "နန်း အကွက်",
+            titleSan: "စံ အကွက်"
         }
     };
 
@@ -242,7 +242,7 @@
     function showFortune(type) {
         const birthday = document.getElementById('dayPicker').value; // နေ့ရွေးထားခြင်း ရှိမရှိ စစ်ရန်
         if (!birthday) {
-            alert(currentLang === 'my' ? "မွေးနေ့ (နေ့စဉ်ဇယား) အရင်ရွေးချယ်ပေးပါ" : "လွိုက်ရွဲးရီးမွူးနီꩻဖွား");
+            alert(currentLang === 'my' ? "မွေးနေ့ (နေ့စဉ်ဇယား) အရင်ရွေးချယ်ပေးပါ" : "လွိုက်ရွေꩻရီးသွော့မွူးနီꩻဖွာꩻ");
             return;
         }
 
