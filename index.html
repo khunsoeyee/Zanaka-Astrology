@@ -47,23 +47,30 @@
         .btn-fortune { padding: 12px 5px; background: var(--dark-brown); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.3s; font-weight: bold; }
         .btn-fortune:hover { background: var(--primary-color); }
 
-        /* Blogger-style Result Post */
         #result { padding: 25px; border-radius: 12px; background: var(--soft-gold); border: 1px solid #eedda2; display: none; text-align: justify; margin-bottom: 30px; animation: slideUp 0.5s ease-out; line-height: 1.8; box-shadow: inset 0 0 10px rgba(212,175,55,0.1); text-align: center; }
         .status-title { font-weight: bold; color: #d32f2f; font-size: 24px; text-align: center; display: block; margin-bottom: 15px; border-bottom: 2px double #eedda2; padding-bottom: 10px; }
-        
-        /* ဟောစာတမ်းပုံအတွက် style */
         .fortune-post-image { max-width: 100%; height: auto; border-radius: 8px; border: 2px solid var(--primary-color); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
         
         .post-footer { margin-top: 20px; font-style: italic; color: #777; font-size: 13px; text-align: right; border-top: 1px solid #eee; padding-top: 10px; }
-
         .footer-nav { border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 10px; justify-content: center; }
         .btn-link { padding: 10px 20px; border-radius: 30px; border: 2px solid var(--primary-color); background: white; color: var(--dark-brown); cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s; }
         .btn-link:hover { background: var(--primary-color); color: white; }
 
+        /* Modal & About Specific CSS */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; border-bottom: 6px solid var(--primary-color); position: relative; }
+        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 450px; text-align: center; border-bottom: 6px solid var(--primary-color); position: relative; }
         .close { position: absolute; right: 15px; top: 10px; font-size: 28px; cursor: pointer; color: #aaa; }
         
+        #aboutText { 
+            text-align: justify; 
+            line-height: 2; 
+            min-height: 120px; 
+            word-break: keep-all; 
+            overflow-wrap: break-word; 
+            font-size: 16px;
+            color: #333;
+        }
+
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -129,13 +136,14 @@
 <div id="aboutModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="toggleAbout()">&times;</span>
-        <p id="aboutText" style="text-align: justify; line-height: 1.8;"></p>
+        <p id="aboutText"></p>
         <p style="font-weight: bold; margin-top: 15px; color: var(--dark-brown);" id="aboutAuthor">By ခွန်စိုးရီ - ချို့ꩻထီ</p>
     </div>
 </div>
 
 <script>
-    let currentLang = 'my'; // လက်ရှိ ဘာသာစကားကို မှတ်သားရန်
+    let currentLang = 'my';
+    let typingEffect = null; 
 
     const translations = {
         my: {
@@ -189,11 +197,11 @@
         
         if (year > 1700) {
             age = currentYear - year;
-            type = currentLang === 'my' ? "အင်္ဂလိပ်သက္ကရာဇ်" : "အင်္ဂလိပ်သက္ကရာဇ်";
+            type = "အင်္ဂလိပ်သက္ကရာဇ်";
         } else {
             const mmYear = currentYear - 638;
             age = mmYear - year;
-            type = currentLang === 'my' ? "မြန်မာသက္ကရာဇ်" : "မြန်မာသက္ကရာဇ်";
+            type = "မြန်မာသက္ကရာဇ်";
         }
         
         const msg = currentLang === 'my' ? 
@@ -216,10 +224,8 @@
         
         const dayIds = ["optSun", "optMon", "optTue", "optWed", "optThu", "optFri", "optSat"];
         dayIds.forEach((id, i) => document.getElementById(id).innerText = t.days[i]);
-        document.getElementById('aboutText').innerText = t.about;
         document.getElementById('aboutAuthor').innerText = t.author;
         
-        // ဘာသာစကားပြောင်းလျှင် ရလဒ်ဟောင်းကို ဝှက်ထားရန်
         document.getElementById('result').style.display = "none";
         document.getElementById('ageDisplay').innerText = "";
     }
@@ -238,9 +244,8 @@
         }
     }
 
-    // စာသားအစား ပုံကို ပြသရန် ပြင်ဆင်ထားသော function
     function showFortune(type) {
-        const birthday = document.getElementById('dayPicker').value; // နေ့ရွေးထားခြင်း ရှိမရှိ စစ်ရန်
+        const birthday = document.getElementById('dayPicker').value;
         if (!birthday) {
             alert(currentLang === 'my' ? "မွေးနေ့ (နေ့စဉ်ဇယား) အရင်ရွေးချယ်ပေးပါ" : "လွိုက်ရွေꩻရီးသွော့မွူးနီꩻဖွာꩻ");
             return;
@@ -251,7 +256,6 @@
         const resultImage = document.getElementById('resImage');
         const t = translations[currentLang];
 
-        // ခေါင်းစဉ်တပ်ခြင်း
         let titleText = "";
         switch(type) {
             case 'ti': titleText = t.titleTi; break;
@@ -263,27 +267,40 @@
             case 'san': titleText = t.titleSan; break;
         }
         resultTitle.innerText = "~~~ " + titleText + " ~~~";
+        resultImage.src = `images/fortunes/${currentLang}_${type}.png`;
 
-        // ပုံအမည်ကို logic ဖြင့် တည်ဆောက်ခြင်း (ဥပမာ- images/fortunes/my_ti.png)
-        // ပုံရှိသည့် folder လမ်းကြောင်းကို images/fortunes/ ဟု သတ်မှတ်ထားသည်
-        const imagePath = `images/fortunes/${currentLang}_${type}.png`;
-        resultImage.src = imagePath;
-
-        // ရလဒ်ကို ဖော်ပြခြင်း
         resultContainer.style.display = "block";
         resultContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
     function toggleAbout() {
         const modal = document.getElementById('aboutModal');
-        modal.style.display = (modal.style.display === "block") ? "none" : "block";
+        const aboutTextElement = document.getElementById('aboutText');
+        const t = translations[currentLang];
+        
+        if (modal.style.display === "block") {
+            modal.style.display = "none";
+            clearInterval(typingEffect);
+        } else {
+            modal.style.display = "block";
+            const fullText = t.about;
+            aboutTextElement.innerText = "";
+            let i = 0;
+            clearInterval(typingEffect);
+            typingEffect = setInterval(() => {
+                if (i < fullText.length) {
+                    aboutTextElement.innerText += fullText.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingEffect);
+                }
+            }, 50); 
+        }
     }
 
-    // Init with default MY
     window.onload = () => changeLang('my');
     window.onclick = (e) => { if (e.target.className === 'modal') toggleAbout(); }
 </script>
 
 </body>
 </html>
- 
