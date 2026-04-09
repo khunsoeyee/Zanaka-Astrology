@@ -1,25 +1,14 @@
 <!DOCTYPE html>
 <html lang="my">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#d4af37">
-
-    <script>
-        if ('service worker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker Registered'))
-                    .catch(err => console.log('Service Worker Failed', err));
-            });
-        }
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>မြန်မာ့ရိုးရာ ဟောစာတမ်း</title>
     <style>
         :root { --primary-color: #d4af37; --bg-color: #f4f1ea; --dark-brown: #5a4a1a; --soft-gold: #fffdf2; }
         body { font-family: 'Pyidaungsu', 'UniBurma', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; border-top: 8px solid var(--primary-color); position: relative; }
+        
+        .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; border-top: 8px solid var(--primary-color); position: relative; min-height: 90vh; }
         
         /* Language Switcher */
         .lang-switcher { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
@@ -47,23 +36,41 @@
         .btn-fortune { padding: 12px 5px; background: var(--dark-brown); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.3s; font-weight: bold; }
         .btn-fortune:hover { background: var(--primary-color); }
 
-        /* Blogger-style Result Post */
-        #result { padding: 25px; border-radius: 12px; background: var(--soft-gold); border: 1px solid #eedda2; display: none; text-align: justify; margin-bottom: 30px; animation: slideUp 0.5s ease-out; line-height: 1.8; box-shadow: inset 0 0 10px rgba(212,175,55,0.1); text-align: center; }
-        .status-title { font-weight: bold; color: #d32f2f; font-size: 24px; text-align: center; display: block; margin-bottom: 15px; border-bottom: 2px double #eedda2; padding-bottom: 10px; }
+        #result { padding: 25px; border-radius: 12px; background: var(--soft-gold); border: 1px solid #eedda2; display: none; margin-bottom: 30px; animation: slideUp 0.5s ease-out; line-height: 1.8; text-align: center; }
+        .status-title { font-weight: bold; color: #d32f2f; font-size: 24px; display: block; margin-bottom: 15px; border-bottom: 2px double #eedda2; padding-bottom: 10px; }
         
-        /* ဟောစာတမ်းပုံအတွက် style */
-        .fortune-post-image { max-width: 100%; height: auto; border-radius: 8px; border: 2px solid var(--primary-color); box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        
-        .post-footer { margin-top: 20px; font-style: italic; color: #777; font-size: 13px; text-align: right; border-top: 1px solid #eee; padding-top: 10px; }
-
-        .footer-nav { border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        .footer-nav { border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 10px; justify-content: center; margin-top: auto; }
         .btn-link { padding: 10px 20px; border-radius: 30px; border: 2px solid var(--primary-color); background: white; color: var(--dark-brown); cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s; }
         .btn-link:hover { background: var(--primary-color); color: white; }
 
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; border-bottom: 6px solid var(--primary-color); position: relative; }
-        .close { position: absolute; right: 15px; top: 10px; font-size: 28px; cursor: pointer; color: #aaa; }
+        /* Modal / Popup Styling */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); align-items: flex-end; justify-content: center; }
+        .modal-content { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px 20px 0 0; 
+            width: 100%; 
+            max-width: 500px; 
+            text-align: center; 
+            border-top: 6px solid var(--primary-color); 
+            position: relative;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+            /* Slide Up Animation */
+            transform: translateY(100%);
+            transition: transform 0.4s ease-out;
+        }
+        .modal.active { display: flex; }
+        .modal.active .modal-content { transform: translateY(0); }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #aaa; font-weight: bold; }
         
+        #aboutText { 
+            text-align: justify; 
+            line-height: 1.8; 
+            font-size: 16px; 
+            color: #333; 
+            min-height: 100px; /* Text area height consistency */
+        }
+
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -116,26 +123,26 @@
 
     <div id="result">
         <span id="resTitle" class="status-title"></span>
-        <img id="resImage" class="fortune-post-image" src="" alt="ဟောစာတမ်းရလဒ်">
-        <div class="post-footer" id="postFooter">ကံကြမ္မာသည် သင်၏ ကြိုးစားအားထုတ်မှုပေါ်တွင်လည်း မူတည်ပါသည်။</div>
+        <div id="resImagePlaceholder">ရလဒ် ပုံစာသား ဤနေရာတွင်ပြမည်</div>
     </div>
 
     <div class="footer-nav">
-        <button class="btn-link" onclick="toggleAbout()" id="btnAbout">About Us</button>
+        <button class="btn-link" onclick="openAbout()" id="btnAbout">About Us</button>
         <a href="https://khunsoeyee.blogspot.com" target="_blank" class="btn-link" id="btnBlog">BLOG</a>
     </div>
 </div>
 
 <div id="aboutModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="toggleAbout()">&times;</span>
-        <p id="aboutText" style="text-align: justify; line-height: 1.8;"></p>
-        <p style="font-weight: bold; margin-top: 15px; color: var(--dark-brown);" id="aboutAuthor">By ခွန်စိုးရီ - ချို့ꩻထီ</p>
+        <span class="close" onclick="closeAbout()">&times;</span>
+        <div id="aboutText"></div>
+        <p style="font-weight: bold; margin-top: 20px; color: var(--dark-brown);" id="aboutAuthor"></p>
     </div>
 </div>
 
 <script>
-    let currentLang = 'my'; // လက်ရှိ ဘာသာစကားကို မှတ်သားရန်
+    let currentLang = 'my';
+    let typingTimer;
 
     const translations = {
         my: {
@@ -148,15 +155,7 @@
             author: "By ခွန်စိုးရီ - ချို့ꩻထီ",
             calcLabel: "မွေးသက္ကရာဇ်ဖြင့် အသက်တွက်ရန်",
             calcBtn: "တွက်မည်",
-            calcPlace: "ဥပမာ - 1995 (သို့) ၁၃၅၇",
-            footer: "ကံကြမ္မာသည် သင်၏ ကြိုးစားအားထုတ်မှုပေါ်တွင်လည်း မူတည်ပါသည်။",
-            titleTi: "တည် အကွက်",
-            titleHtwet: "ထွက် အကွက်",
-            titlePyet: "ပျက် အကွက်",
-            titleKyauk: "ကျောက် အကွက်",
-            titleHtee: "ထီး အကွက်",
-            titleNan: "နန်း အကွက်",
-            titleSan: "စံ အကွက်"
+            calcPlace: "ဥပမာ - 1995 (သို့) ၁၃၅၇"
         },
         pa: {
             title: "ဇနကဟော်ꩻကိန်ꩻ (ပအိုဝ်ႏ)",
@@ -168,39 +167,9 @@
             author: "By ခွန်စိုးရီ - ချို့ꩻထီ",
             calcLabel: "တွက်အသက်တာႏ",
             calcBtn: "တွက်သွော့",
-            calcPlace: "ဥပမာ - 1995 မွေးတဝ်းတဲ့ ၁၃၅၇",
-            footer: "ကံႏဇာႏတာႏယိုနဝ်ꩻအဝ်ႏဒင်ႏဒျာႏ နီဗွေႏသီးထာꩻကျိုꩻစာꩻမုꩻအလောင်းသွူဩ။",
-            titleTi: "တည် အကွက်",
-            titleHtwet: "ထွက် အကွက်",
-            titlePyet: "ပျက် အကွက်",
-            titleKyauk: "ကျောက် အကွက်",
-            titleHtee: "ထီး အကွက်",
-            titleNan: "နန်း အကွက်",
-            titleSan: "စံ အကွက်"
+            calcPlace: "ဥပမာ - 1995 မွေးတဝ်းတဲ့ ၁၃၅၇"
         }
     };
-
-    function calculateAge() {
-        const year = parseInt(document.getElementById('birthYear').value);
-        if (!year) return;
-        const currentYear = new Date().getFullYear();
-        let age = 0;
-        let type = "";
-        
-        if (year > 1700) {
-            age = currentYear - year;
-            type = currentLang === 'my' ? "အင်္ဂလိပ်သက္ကရာဇ်" : "အင်္ဂလိပ်သက္ကရာဇ်";
-        } else {
-            const mmYear = currentYear - 638;
-            age = mmYear - year;
-            type = currentLang === 'my' ? "မြန်မာသက္ကရာဇ်" : "မြန်မာသက္ကရာဇ်";
-        }
-        
-        const msg = currentLang === 'my' ? 
-            `သင်၏အသက်မှာ (${age}) နှစ်ဖြစ်ပါသည်။ [${type}ဖြင့်တွက်ချက်ထားသည်]` : 
-            `နီဗွေႏအသက်ယိုနဝ်ꩻ (${age}) နေင်ႏသွူဩ။ [တွက်တောမ်ႏ ${type} သွူ]`;
-        document.getElementById('ageDisplay').innerText = msg;
-    }
 
     function changeLang(lang) {
         currentLang = lang;
@@ -212,76 +181,68 @@
         document.getElementById('calcLabel').innerText = t.calcLabel;
         document.getElementById('btnCalcText').innerText = t.calcBtn;
         document.getElementById('birthYear').placeholder = t.calcPlace;
-        document.getElementById('postFooter').innerText = t.footer;
+        document.getElementById('aboutAuthor').innerText = t.author;
         
         const dayIds = ["optSun", "optMon", "optTue", "optWed", "optThu", "optFri", "optSat"];
         dayIds.forEach((id, i) => document.getElementById(id).innerText = t.days[i]);
-        document.getElementById('aboutText').innerText = t.about;
-        document.getElementById('aboutAuthor').innerText = t.author;
-        
-        // ဘာသာစကားပြောင်းလျှင် ရလဒ်ဟောင်းကို ဝှက်ထားရန်
         document.getElementById('result').style.display = "none";
-        document.getElementById('ageDisplay').innerText = "";
+    }
+
+    function calculateAge() {
+        const year = parseInt(document.getElementById('birthYear').value);
+        if (!year) return;
+        const currentYear = new Date().getFullYear();
+        let age = (year > 1700) ? (currentYear - year) : (currentYear - 638 - year);
+        document.getElementById('ageDisplay').innerText = currentLang === 'my' ? `သင့်အသက်မှာ (${age}) နှစ်ဖြစ်ပါသည်။` : `နီဗွေႏအသက်ယိုနဝ်ꩻ (${age}) နေင်ႏသွူဩ။`;
     }
 
     function updateImage() {
         const day = document.getElementById('dayPicker').value;
         const img = document.getElementById('chartImage');
         const placeholder = document.getElementById('placeholder');
-        if (day) {
-            img.src = day + ".jpg"; 
-            img.style.display = "block";
-            placeholder.style.display = "none";
-        } else {
-            img.style.display = "none";
-            placeholder.style.display = "block";
-        }
+        if (day) { img.src = day + ".jpg"; img.style.display = "block"; placeholder.style.display = "none"; }
+        else { img.style.display = "none"; placeholder.style.display = "block"; }
     }
 
-    // စာသားအစား ပုံကို ပြသရန် ပြင်ဆင်ထားသော function
+    // --- Typing & Modal Logic ---
+    function openAbout() {
+        const modal = document.getElementById('aboutModal');
+        const textContainer = document.getElementById('aboutText');
+        const fullText = translations[currentLang].about;
+        
+        modal.classList.add('active');
+        textContainer.innerText = "";
+        let i = 0;
+        
+        clearInterval(typingTimer);
+        typingTimer = setInterval(() => {
+            if (i < fullText.length) {
+                textContainer.innerText += fullText.charAt(i);
+                i++;
+            } else {
+                clearInterval(typingTimer);
+            }
+        }, 50); // Speed of typing
+    }
+
+    function closeAbout() {
+        const modal = document.getElementById('aboutModal');
+        modal.classList.remove('active');
+        clearInterval(typingTimer);
+    }
+
     function showFortune(type) {
-        const birthday = document.getElementById('dayPicker').value; // နေ့ရွေးထားခြင်း ရှိမရှိ စစ်ရန်
-        if (!birthday) {
-            alert(currentLang === 'my' ? "မွေးနေ့ (နေ့စဉ်ဇယား) အရင်ရွေးချယ်ပေးပါ" : "လွိုက်ရွေꩻရီးသွော့မွူးနီꩻဖွာꩻ");
+        if (!document.getElementById('dayPicker').value) {
+            alert(currentLang === 'my' ? "မွေးနေ့အရင်ရွေးပါ" : "လွိုက်ရွေꩻရီးသွော့မွူးနီꩻ");
             return;
         }
-
-        const resultContainer = document.getElementById('result');
-        const resultTitle = document.getElementById('resTitle');
-        const resultImage = document.getElementById('resImage');
-        const t = translations[currentLang];
-
-        // ခေါင်းစဉ်တပ်ခြင်း
-        let titleText = "";
-        switch(type) {
-            case 'ti': titleText = t.titleTi; break;
-            case 'htwet': titleText = t.titleHtwet; break;
-            case 'pyet': titleText = t.titlePyet; break;
-            case 'kyauk': titleText = t.titleKyauk; break;
-            case 'htee': titleText = t.titleHtee; break;
-            case 'nan': titleText = t.titleNan; break;
-            case 'san': titleText = t.titleSan; break;
-        }
-        resultTitle.innerText = "~~~ " + titleText + " ~~~";
-
-        // ပုံအမည်ကို logic ဖြင့် တည်ဆောက်ခြင်း (ဥပမာ- images/fortunes/my_ti.png)
-        // ပုံရှိသည့် folder လမ်းကြောင်းကို images/fortunes/ ဟု သတ်မှတ်ထားသည်
-        const imagePath = `images/fortunes/${currentLang}_${type}.png`;
-        resultImage.src = imagePath;
-
-        // ရလဒ်ကို ဖော်ပြခြင်း
-        resultContainer.style.display = "block";
-        resultContainer.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('result').style.display = "block";
+        document.getElementById('resTitle').innerText = "~~~ " + type.toUpperCase() + " ~~~";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
-    function toggleAbout() {
-        const modal = document.getElementById('aboutModal');
-        modal.style.display = (modal.style.display === "block") ? "none" : "block";
-    }
-
-    // Init with default MY
     window.onload = () => changeLang('my');
-    window.onclick = (e) => { if (e.target.className === 'modal') toggleAbout(); }
+    window.onclick = (e) => { if (e.target.id === 'aboutModal') closeAbout(); }
 </script>
 
 </body>
