@@ -21,7 +21,6 @@
         body { font-family: 'Pyidaungsu', 'UniBurma', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
         .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; border-top: 8px solid var(--primary-color); position: relative; }
         
-        /* Language Switcher */
         .lang-switcher { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
         .lang-btn { cursor: pointer; border: 1px solid #ddd; border-radius: 8px; background: white; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: bold; transition: 0.3s; }
         .lang-btn:hover { background: #fdfaf0; border-color: var(--primary-color); }
@@ -29,7 +28,6 @@
 
         h2 { color: var(--dark-brown); margin: 45px 0 20px 0; font-size: 22px; border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 5px; }
         
-        /* Age Calculator Style */
         .calc-box { background: #f9f6f0; border: 1px solid #e0d5b1; padding: 15px; border-radius: 12px; margin-bottom: 25px; text-align: left; }
         .calc-box label { font-weight: bold; font-size: 14px; color: var(--dark-brown); display: block; margin-bottom: 8px; }
         .input-group { display: flex; gap: 8px; }
@@ -56,20 +54,15 @@
         .btn-link { padding: 10px 20px; border-radius: 30px; border: 2px solid var(--primary-color); background: white; color: var(--dark-brown); cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; transition: 0.3s; }
         .btn-link:hover { background: var(--primary-color); color: white; }
 
-        /* Modal & About Specific CSS */
+        /* Custom Alert & Modal CSS */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 450px; text-align: center; border-bottom: 6px solid var(--primary-color); position: relative; }
+        .modal-content { background: white; margin: 20% auto; padding: 30px; border-radius: 20px; width: 85%; max-width: 450px; text-align: center; border-bottom: 6px solid var(--primary-color); position: relative; animation: slideUp 0.3s ease-out; }
         .close { position: absolute; right: 15px; top: 10px; font-size: 28px; cursor: pointer; color: #aaa; }
         
-        #aboutText { 
-            text-align: justify; 
-            line-height: 2; 
-            min-height: 120px; 
-            word-break: keep-all; 
-            overflow-wrap: break-word; 
-            font-size: 16px;
-            color: #333;
-        }
+        /* New Alert Styling */
+        .alert-icon { font-size: 50px; margin-bottom: 15px; display: block; }
+        .alert-text { font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 20px; font-weight: bold; }
+        .btn-ok { background: var(--primary-color); color: white; border: none; padding: 10px 40px; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(212,175,55,0.3); }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -133,10 +126,18 @@
     </div>
 </div>
 
+<div id="customAlert" class="modal">
+    <div class="modal-content" style="border-bottom: 6px solid #d32f2f;">
+        <span class="alert-icon">⚠️</span>
+        <p id="alertMsg" class="alert-text"></p>
+        <button class="btn-ok" onclick="closeAlert()">အိုကေ</button>
+    </div>
+</div>
+
 <div id="aboutModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="toggleAbout()">&times;</span>
-        <p id="aboutText"></p>
+        <p id="aboutText" style="text-align: justify; line-height: 2; font-size: 16px; color: #333;"></p>
         <p style="font-weight: bold; margin-top: 15px; color: var(--dark-brown);" id="aboutAuthor">By ခွန်စိုးရီ - ချို့ꩻထီ</p>
     </div>
 </div>
@@ -158,13 +159,9 @@
             calcBtn: "တွက်မည်",
             calcPlace: "ဥပမာ - 1995 (သို့) ၁၃၅၇",
             footer: "ကံကြမ္မာသည် သင်၏ ကြိုးစားအားထုတ်မှုပေါ်တွင်လည်း မူတည်ပါသည်။",
-            titleTi: "တည် အကွက်",
-            titleHtwet: "ထွက် အကွက်",
-            titlePyet: "ပျက် အကွက်",
-            titleKyauk: "ကျောက် အကွက်",
-            titleHtee: "ထီး အကွက်",
-            titleNan: "နန်း အကွက်",
-            titleSan: "စံ အကွက်"
+            alertWarn: "ကျေးဇူးပြု၍ မွေးနေ့ (နေ့နံ) ကို အရင်ရွေးချယ်ပေးပါဦး။",
+            titleTi: "တည် အကွက်", titleHtwet: "ထွက် အကွက်", titlePyet: "ပျက် အကွက်",
+            titleKyauk: "ကျောက် အကွက်", titleHtee: "ထီး အကွက်", titleNan: "နန်း အကွက်", titleSan: "စံ အကွက်"
         },
         pa: {
             title: "ဇနကဟော်ꩻကိန်ꩻ (ပအိုဝ်ႏ)",
@@ -178,35 +175,29 @@
             calcBtn: "တွက်သွော့",
             calcPlace: "ဥပမာ - 1995 မွေးတဝ်းတဲ့ ၁၃၅၇",
             footer: "ကံႏဇာႏတာႏယိုနဝ်ꩻအဝ်ႏဒင်ႏဒျာႏ နီဗွေႏသီးထာꩻကျိုꩻစာꩻမုꩻအလောင်းသွူဩ။",
-            titleTi: "တည် အကွက်",
-            titleHtwet: "ထွက် အကွက်",
-            titlePyet: "ပျက် အကွက်",
-            titleKyauk: "ကျောက် အကွက်",
-            titleHtee: "ထီး အကွက်",
-            titleNan: "နန်း အကွက်",
-            titleSan: "စံ အကွက်"
+            alertWarn: "လွိုက်ရွေꩻရီးသွော့ မွူးနီꩻဖွာꩻနဝ်ꩻဩ။",
+            titleTi: "တည် အကွက်", titleHtwet: "ထွက် အကွက်", titlePyet: "ပျက် အကွက်",
+            titleKyauk: "ကျောက် အကွက်", titleHtee: "ထီး အကွက်", titleNan: "နန်း အကွက်", titleSan: "စံ အကွက်"
         }
     };
+
+    // Alert Functions
+    function openAlert(msg) {
+        document.getElementById('alertMsg').innerText = msg;
+        document.getElementById('customAlert').style.display = 'block';
+    }
+    function closeAlert() {
+        document.getElementById('customAlert').style.display = 'none';
+    }
 
     function calculateAge() {
         const year = parseInt(document.getElementById('birthYear').value);
         if (!year) return;
         const currentYear = new Date().getFullYear();
-        let age = 0;
-        let type = "";
-        
-        if (year > 1700) {
-            age = currentYear - year;
-            type = "အင်္ဂလိပ်သက္ကရာဇ်";
-        } else {
-            const mmYear = currentYear - 638;
-            age = mmYear - year;
-            type = "မြန်မာသက္ကရာဇ်";
-        }
-        
-        const msg = currentLang === 'my' ? 
-            `သင်၏အသက်မှာ (${age}) နှစ်ဖြစ်ပါသည်။ [${type}ဖြင့်တွက်ချက်ထားသည်]` : 
-            `နီဗွေႏအသက်ယိုနဝ်ꩻ (${age}) နေင်ႏသွူဩ။ [တွက်တောမ်ႏ ${type} သွူ]`;
+        let age = 0; let type = "";
+        if (year > 1700) { age = currentYear - year; type = "အင်္ဂလိပ်သက္ကရာဇ်"; } 
+        else { age = (currentYear - 638) - year; type = "မြန်မာသက္ကရာဇ်"; }
+        const msg = currentLang === 'my' ? `သင်၏အသက်မှာ (${age}) နှစ်ဖြစ်ပါသည်။ [${type}]` : `နီဗွေႏအသက်ယိုနဝ်ꩻ (${age}) နေင်ႏသွူဩ။ [${type}]`;
         document.getElementById('ageDisplay').innerText = msg;
     }
 
@@ -221,11 +212,9 @@
         document.getElementById('btnCalcText').innerText = t.calcBtn;
         document.getElementById('birthYear').placeholder = t.calcPlace;
         document.getElementById('postFooter').innerText = t.footer;
-        
         const dayIds = ["optSun", "optMon", "optTue", "optWed", "optThu", "optFri", "optSat"];
         dayIds.forEach((id, i) => document.getElementById(id).innerText = t.days[i]);
         document.getElementById('aboutAuthor').innerText = t.author;
-        
         document.getElementById('result').style.display = "none";
         document.getElementById('ageDisplay').innerText = "";
     }
@@ -234,45 +223,23 @@
         const day = document.getElementById('dayPicker').value;
         const img = document.getElementById('chartImage');
         const placeholder = document.getElementById('placeholder');
-        if (day) {
-            img.src = day + ".jpg"; 
-            img.style.display = "block";
-            placeholder.style.display = "none";
-        } else {
-            img.style.display = "none";
-            placeholder.style.display = "block";
-        }
+        if (day) { img.src = day + ".jpg"; img.style.display = "block"; placeholder.style.display = "none"; } 
+        else { img.style.display = "none"; placeholder.style.display = "block"; }
     }
 
     function showFortune(type) {
-    const birthday = document.getElementById('dayPicker').value;
-    if (!birthday) {
-        // ပိုမိုယဉ်ကျေးပြီး မိုက်တဲ့ သတိပေးစာသား
-        const alertMsg = currentLang === 'my' 
-            ? "⚠️ ကျေးဇူးပြု၍ သင်၏ မွေးနေ့ (နေ့နံ) ကို အရင်ရွေးချယ်ပေးပါဦးခင်ဗျာ။" 
-            : "⚠️ သတိꩻ၊ လွိုက်ရွေꩻရီးသွော့ မွူးနီꩻဖွာꩻနဝ်ꩻဩ။";
-        alert(alertMsg);
-        return;
-    }
-
+        const birthday = document.getElementById('dayPicker').value;
+        if (!birthday) {
+            openAlert(translations[currentLang].alertWarn);
+            return;
+        }
         const resultContainer = document.getElementById('result');
         const resultTitle = document.getElementById('resTitle');
         const resultImage = document.getElementById('resImage');
         const t = translations[currentLang];
-
-        let titleText = "";
-        switch(type) {
-            case 'ti': titleText = t.titleTi; break;
-            case 'htwet': titleText = t.titleHtwet; break;
-            case 'pyet': titleText = t.titlePyet; break;
-            case 'kyauk': titleText = t.titleKyauk; break;
-            case 'htee': titleText = t.titleHtee; break;
-            case 'nan': titleText = t.titleNan; break;
-            case 'san': titleText = t.titleSan; break;
-        }
+        let titleText = t['title' + type.charAt(0).toUpperCase() + type.slice(1)];
         resultTitle.innerText = "~~~ " + titleText + " ~~~";
         resultImage.src = `images/fortunes/${currentLang}_${type}.png`;
-
         resultContainer.style.display = "block";
         resultContainer.scrollIntoView({ behavior: 'smooth' });
     }
@@ -281,29 +248,23 @@
         const modal = document.getElementById('aboutModal');
         const aboutTextElement = document.getElementById('aboutText');
         const t = translations[currentLang];
-        
-        if (modal.style.display === "block") {
-            modal.style.display = "none";
-            clearInterval(typingEffect);
-        } else {
+        if (modal.style.display === "block") { modal.style.display = "none"; clearInterval(typingEffect); } 
+        else {
             modal.style.display = "block";
-            const fullText = t.about;
-            aboutTextElement.innerText = "";
-            let i = 0;
-            clearInterval(typingEffect);
+            const fullText = t.about; aboutTextElement.innerText = "";
+            let i = 0; clearInterval(typingEffect);
             typingEffect = setInterval(() => {
-                if (i < fullText.length) {
-                    aboutTextElement.innerText += fullText.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typingEffect);
-                }
+                if (i < fullText.length) { aboutTextElement.innerText += fullText.charAt(i); i++; } 
+                else { clearInterval(typingEffect); }
             }, 50); 
         }
     }
 
     window.onload = () => changeLang('my');
-    window.onclick = (e) => { if (e.target.className === 'modal') toggleAbout(); }
+    window.onclick = (e) => { 
+        if (e.target.id === 'aboutModal') toggleAbout();
+        if (e.target.id === 'customAlert') closeAlert();
+    }
 </script>
 
 </body>
