@@ -245,11 +245,15 @@
     }
 
     function showFortune(type) {
-        const birthday = document.getElementById('dayPicker').value;
-        if (!birthday) {
-            alert(currentLang === 'my' ? "မွေးနေ့ (နေ့စဉ်ဇယား) အရင်ရွေးချယ်ပေးပါ" : "လွိုက်ရွေꩻရီးသွော့မွူးနီꩻဖွာꩻ");
-            return;
-        }
+    const birthday = document.getElementById('dayPicker').value;
+    if (!birthday) {
+        // ပိုမိုယဉ်ကျေးပြီး မိုက်တဲ့ သတိပေးစာသား
+        const alertMsg = currentLang === 'my' 
+            ? "⚠️ ကျေးဇူးပြု၍ သင်၏ မွေးနေ့ (နေ့နံ) ကို အရင်ရွေးချယ်ပေးပါဦးခင်ဗျာ။" 
+            : "⚠️ သတိꩻ၊ လွိုက်ရွေꩻရီးသွော့ မွူးနီꩻဖွာꩻနဝ်ꩻဩ။";
+        alert(alertMsg);
+        return;
+    }
 
         const resultContainer = document.getElementById('result');
         const resultTitle = document.getElementById('resTitle');
